@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Umbrella</string>
+    <string name="back_button">Back</string>
+    <string name="home">Home</string>
+    <string name="add_city">Add city</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="city_name">City name</string>
+    <string name="save">Save</string>
+    <string name="retry">Retry</string>
+</resources>
