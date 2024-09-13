@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.umbrella.data.CitiesRepository
 import com.example.umbrella.data.CityEntity
 
-class CityEntryVewModel(private val citiesRepository: CitiesRepository) : ViewModel() {
+class CityEntryViewModel(private val citiesRepository: CitiesRepository) : ViewModel() {
     var cityUiState by mutableStateOf(CityUiState())
         private set
 

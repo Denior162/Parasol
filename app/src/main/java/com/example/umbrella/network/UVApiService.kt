@@ -1,5 +1,6 @@
 package com.example.umbrella.network
 
+import com.example.umbrella.model.UvResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET

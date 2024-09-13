@@ -1,4 +1,4 @@
-package com.example.umbrella.network
+package com.example.umbrella.model
 
 import kotlinx.serialization.Serializable
 

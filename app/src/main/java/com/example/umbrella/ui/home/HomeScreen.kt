@@ -43,8 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.umbrella.R
-import com.example.umbrella.network.Forecast
-import com.example.umbrella.network.UvResponse
+import com.example.umbrella.model.Forecast
+import com.example.umbrella.model.UvResponse
 import com.example.umbrella.ui.components.HomeScreenTopAppBar
 import com.example.umbrella.ui.navigation.NavigationDestination
 import com.example.umbrella.ui.theme.extendedDark

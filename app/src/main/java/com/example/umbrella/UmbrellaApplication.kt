@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.umbrella.data.AppContainer
 import com.example.umbrella.data.AppDataContainer
 
-class UmbrellaApplication: Application() {
+class UmbrellaApplication : Application() {
     lateinit var container: AppContainer
 
     override fun onCreate() {
@@ -12,3 +12,7 @@ class UmbrellaApplication: Application() {
         container = AppDataContainer(this)
     }
 }
+
+//class UmbrellaApplication : Application() {
+//    val container: AppContainer by lazy { AppDataContainer(this) }
+//}

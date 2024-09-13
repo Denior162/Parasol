@@ -37,7 +37,7 @@ fun CityEntryScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
-    viewModel: CityEntryVewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: CityEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -56,7 +56,7 @@ fun CityEntryScreen(
                 onSaveClick = {
                     coroutineScope.launch {
                         viewModel.saveCity()
-                        navigateBack
+                        navigateBack()
                     }
                 },
                 modifier = Modifier.padding(innerPadding)

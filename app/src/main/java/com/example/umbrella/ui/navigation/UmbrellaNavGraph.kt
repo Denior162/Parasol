@@ -1,5 +1,6 @@
 package com.example.umbrella.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,7 +28,13 @@ fun UmbrellaNavHost(
 
             HomeScreen(
                 indexUiState = indexViewModel.indexUiState,
-                navigateToCityEntry = { navController.navigate(CityEntryDestination.route) },
+                navigateToCityEntry = {
+                    try {
+                        navController.navigate(CityEntryDestination.route)
+                    } catch (e: Exception) {
+                        Log.e("NavigationError", "Error navigating to CityEntryDestination", e)
+                    }
+                },
                 modifier = Modifier,
                 retryAction = indexViewModel::getUVIs,
             )

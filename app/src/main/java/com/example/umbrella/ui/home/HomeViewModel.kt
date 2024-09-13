@@ -2,8 +2,8 @@ package com.example.umbrella.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.umbrella.model.UvResponse
 import com.example.umbrella.network.IndexApi
-import com.example.umbrella.network.UvResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,6 +15,7 @@ sealed interface IndexUiState {
     data class Success(val indexes: UvResponse) : IndexUiState
     data object Error : IndexUiState
 }
+
 
 class HomeViewModel : ViewModel() {
     private val _indexUiState = MutableStateFlow<IndexUiState>(IndexUiState.Loading)
