@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.umbrella.ui.AppViewModelProvider
 import com.example.umbrella.ui.city.CityEntryDestination
 import com.example.umbrella.ui.city.CityEntryScreen
 import com.example.umbrella.ui.home.HomeDestination
@@ -15,16 +16,14 @@ import com.example.umbrella.ui.home.HomeViewModel
 
 @Composable
 fun UmbrellaNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
+    navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
-            val indexViewModel: HomeViewModel = viewModel()
+            val indexViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
             HomeScreen(
                 indexUiState = indexViewModel.indexUiState,

@@ -3,7 +3,7 @@ package com.example.umbrella.data
 import kotlinx.coroutines.flow.Flow
 
 class OfflineCitiesRepository (private val cityDao: CityDao) : CitiesRepository {
-        override fun getListOfCities(): Flow<List<CityEntity>> = cityDao.getListOFCities()
+        override fun getFullListOfCities(): Flow<List<CityEntity>> = cityDao.getListOFCities()
 
         override fun getOneCity(id: Int): Flow<CityEntity?> = cityDao.getCity(id)
 

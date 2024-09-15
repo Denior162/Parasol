@@ -12,7 +12,3 @@ class UmbrellaApplication : Application() {
         container = AppDataContainer(this)
     }
 }
-
-//class UmbrellaApplication : Application() {
-//    val container: AppContainer by lazy { AppDataContainer(this) }
-//}

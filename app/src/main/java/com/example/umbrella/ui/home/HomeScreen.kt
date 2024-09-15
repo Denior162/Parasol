@@ -42,9 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.umbrella.R
 import com.example.umbrella.model.Forecast
 import com.example.umbrella.model.UvResponse
+import com.example.umbrella.ui.AppViewModelProvider
+import com.example.umbrella.ui.components.CitiesForDrawer
 import com.example.umbrella.ui.components.HomeScreenTopAppBar
 import com.example.umbrella.ui.navigation.NavigationDestination
 import com.example.umbrella.ui.theme.extendedDark
@@ -66,8 +69,10 @@ fun HomeScreen(
     navigateToCityEntry: () -> Unit,
     retryAction: () -> Unit,
     indexUiState: StateFlow<IndexUiState>,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val homeUiState by viewModel.homeUiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -84,6 +89,7 @@ fun HomeScreen(
                     Text(text = stringResource(R.string.add_city))
                 }
 
+                CitiesForDrawer(cityList = homeUiState.citiesList, onItemClick = {})
             }
         }
     ) {

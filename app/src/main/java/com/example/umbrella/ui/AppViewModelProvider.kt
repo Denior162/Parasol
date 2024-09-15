@@ -11,7 +11,9 @@ import com.example.umbrella.ui.home.HomeViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            HomeViewModel()
+            HomeViewModel(
+                umbrellaApplication().container.citiesRepository
+            )
         }
         initializer {
             CityEntryViewModel((umbrellaApplication().container.citiesRepository))
@@ -21,6 +23,3 @@ object AppViewModelProvider {
 
 fun CreationExtras.umbrellaApplication(): UmbrellaApplication =
     (this[AndroidViewModelFactory.APPLICATION_KEY] as UmbrellaApplication)
-
-//fun CreationExtras.umbrellaApplication(): UmbrellaApplication =
-//    (this[AndroidViewModelFactory.APPLICATION_KEY] as UmbrellaApplication)

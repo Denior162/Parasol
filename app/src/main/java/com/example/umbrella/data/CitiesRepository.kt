@@ -7,7 +7,7 @@ interface CitiesRepository {
     /**
      * Retrieve all the items from the the given data source.
      */
-    fun getListOfCities(): Flow<List<CityEntity>>
+    fun getFullListOfCities(): Flow<List<CityEntity>>
 
     /**
      * Retrieve an item from the given data source that matches with the [id].
