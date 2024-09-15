@@ -18,8 +18,9 @@ import com.example.umbrella.data.CityEntity
 @Composable
 fun CitiesForDrawer(
     cityList: List<CityEntity>,
-    onItemClick: (Int) -> Unit,
+    onCitySelected: (CityEntity) -> Unit,
     modifier: Modifier = Modifier,
+    selectedCityId: Int?,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     Column(
@@ -36,8 +37,9 @@ fun CitiesForDrawer(
         } else {
             ListOFCitiesInDrawer(
                 cityList = cityList,
-                onItemClick = { onItemClick(it.id) },
-                contentPadding = contentPadding
+                onCitySelected = onCitySelected,
+                contentPadding = contentPadding,
+                selectedCityId = selectedCityId
             )
         }
     }
@@ -45,9 +47,9 @@ fun CitiesForDrawer(
 
 @Composable
 private fun ListOFCitiesInDrawer(
-    cityList: List<CityEntity>,
-    onItemClick: (CityEntity) -> Unit,
+    cityList: List<CityEntity>, onCitySelected: (CityEntity) -> Unit,
     contentPadding: PaddingValues,
+    selectedCityId: Int?,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -57,19 +59,21 @@ private fun ListOFCitiesInDrawer(
 
         items(items = cityList, key = { it.id }) { city ->
             CityElementInDrawer(
-                city = city, selectedCity = {})
+                city = city, selectedCity = {onCitySelected(city)}, isSelected = city.id == selectedCityId)
         }
     }
 }
 
 @Composable
 private fun CityElementInDrawer(
-    city: CityEntity, modifier: Modifier = Modifier,
+    city: CityEntity,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
     selectedCity: () -> Unit
 ) {
     NavigationDrawerItem(
         label = { Text(text = city.name) },
-        selected = false,
+        selected = isSelected,
         onClick = selectedCity
     )
 }

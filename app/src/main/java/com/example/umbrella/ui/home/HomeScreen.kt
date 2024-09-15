@@ -77,6 +77,7 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val selectedCityId by viewModel.selectedCityId.collectAsState()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -89,7 +90,11 @@ fun HomeScreen(
                     Text(text = stringResource(R.string.add_city))
                 }
 
-                CitiesForDrawer(cityList = homeUiState.citiesList, onItemClick = {})
+                CitiesForDrawer(
+                    cityList = homeUiState.citiesList, selectedCityId = selectedCityId, onCitySelected = { selectedCity ->
+                        viewModel.setSelectedCity(selectedCity)
+                        // вызов getUVIs() или другой функции, использующей координаты
+                    })
             }
         }
     ) {

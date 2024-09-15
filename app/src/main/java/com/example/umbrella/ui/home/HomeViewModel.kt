@@ -22,7 +22,7 @@ sealed interface IndexUiState {
 }
 
 
-class HomeViewModel(private val citiesRepository: CitiesRepository) : ViewModel() {
+class HomeViewModel(citiesRepository: CitiesRepository) : ViewModel() {
     private val _indexUiState = MutableStateFlow<IndexUiState>(IndexUiState.Loading)
     val indexUiState: StateFlow<IndexUiState> = _indexUiState
 
@@ -37,6 +37,21 @@ class HomeViewModel(private val citiesRepository: CitiesRepository) : ViewModel(
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
+    private var _selectedCityId = MutableStateFlow<Int?>(null)
+    val selectedCityId: StateFlow<Int?> = _selectedCityId
+
+    fun setSelectedCity(city: CityEntity) {
+        _selectedCityId.value = city.id
+    }
+
+    private var selectedCity: CityEntity? = null
+
+    fun getSelectedCityCoordinates(): Pair<Double, Double> {
+        return _selectedCityId.value?.let { selectedId ->
+            homeUiState.value.citiesList.find { it.id == selectedId }
+        }?.let { Pair(it.latitude, it.longitude) }
+            ?: Pair(35.0, 50.0) // значения по умолчанию
+    }
 
     init {
         getUVIs()
@@ -46,8 +61,9 @@ class HomeViewModel(private val citiesRepository: CitiesRepository) : ViewModel(
         viewModelScope.launch {
             _indexUiState.value = IndexUiState.Loading
             _indexUiState.value = try {
+                val (latitude, longitude) = getSelectedCityCoordinates()
                 val response = IndexApi.retrofitService.getIndexes(
-                    latitude = 50.0, longitude = 35.0
+                    latitude = latitude, longitude = longitude
                 )
                 IndexUiState.Success(response)
             } catch (e: IOException) {
@@ -61,5 +77,6 @@ class HomeViewModel(private val citiesRepository: CitiesRepository) : ViewModel(
     }
 }
 
-data class HomeUiState(val citiesList: List<CityEntity> = listOf()
+data class HomeUiState(
+    val citiesList: List<CityEntity> = listOf()
 )

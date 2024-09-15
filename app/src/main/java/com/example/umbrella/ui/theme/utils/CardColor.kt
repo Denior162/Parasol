@@ -34,10 +34,10 @@ fun getCardColors(uvi: Double, extendedColorScheme: ExtendedColorScheme): CardCo
         )
 
         else -> CardColors(
-            containerColor = extendedColorScheme.veryHighRisk.colorContainer,
-            contentColor = extendedColorScheme.veryHighRisk.onColorContainer,
-            disabledContainerColor = extendedColorScheme.veryHighRisk.colorContainer,
-            disabledContentColor = extendedColorScheme.veryHighRisk.onColorContainer
+            containerColor = extendedColorScheme.extremeRisk.colorContainer,
+            contentColor = extendedColorScheme.extremeRisk.onColorContainer,
+            disabledContainerColor = extendedColorScheme.extremeRisk.colorContainer,
+            disabledContentColor = extendedColorScheme.extremeRisk.onColorContainer
         )
     }
 }
