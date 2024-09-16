@@ -91,7 +91,6 @@ fun CityInputForm(
     cityDetails: CityDetails,
     modifier: Modifier = Modifier,
     onCityValueChange: (CityDetails) -> Unit = {},
-    enabled: Boolean = true
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         TextField(

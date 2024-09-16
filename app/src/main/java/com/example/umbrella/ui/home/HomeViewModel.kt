@@ -44,9 +44,7 @@ class HomeViewModel(citiesRepository: CitiesRepository) : ViewModel() {
         _selectedCityId.value = city.id
     }
 
-    private var selectedCity: CityEntity? = null
-
-    fun getSelectedCityCoordinates(): Pair<Double, Double> {
+    private fun getSelectedCityCoordinates(): Pair<Double, Double> {
         return _selectedCityId.value?.let { selectedId ->
             homeUiState.value.citiesList.find { it.id == selectedId }
         }?.let { Pair(it.latitude, it.longitude) }

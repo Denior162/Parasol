@@ -91,9 +91,12 @@ fun HomeScreen(
                 }
 
                 CitiesForDrawer(
-                    cityList = homeUiState.citiesList, selectedCityId = selectedCityId, onCitySelected = { selectedCity ->
+                    cityList = homeUiState.citiesList,
+                    selectedCityId = selectedCityId,
+                    onCitySelected = { selectedCity ->
                         viewModel.setSelectedCity(selectedCity)
-                        // вызов getUVIs() или другой функции, использующей координаты
+                        retryAction()
+                        scope.launch { drawerState.apply { if (isClosed) open() else close() } }
                     })
             }
         }
@@ -101,7 +104,6 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 HomeScreenTopAppBar(
-                    modifier = Modifier,
                     navDrawer = { scope.launch { drawerState.apply { if (isClosed) open() else close() } } },
                     scrollBehavior = scrollBehavior,
                     retryAction = retryAction
@@ -111,7 +113,7 @@ fun HomeScreen(
             Column(modifier = Modifier.padding(innerPadding)) {
                 val currentIndexUiState by indexUiState.collectAsState(IndexUiState.Loading)
                 Column(
-                    modifier = Modifier
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 ) {
                     when (currentIndexUiState) {
                         is IndexUiState.Loading -> LoadingScreen()
@@ -174,7 +176,7 @@ fun ResultScreen(
 
     Column(modifier = modifier) {
         Text(text = "${uvResponse.now.uvi}")
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        LazyColumn(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
             items(forecastGroups) { group ->
                 ForecastGroupCard(group = group)
             }
@@ -189,8 +191,7 @@ fun ForecastGroupCard(group: ForecastGroup) {
     val cardColor = getCardColors(group.items.first().uvi, extendedColorScheme)
     Card(
         onClick = { isExpanded = !isExpanded },
-        modifier = Modifier
-            .padding(8.dp)
+        modifier = Modifier.padding(4.dp)
             .animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
@@ -205,12 +206,12 @@ fun ForecastGroupCard(group: ForecastGroup) {
                         .padding(8.dp)
                         .weight(1f)
                 ) {
-                    Text(text = group.level, style = MaterialTheme.typography.headlineLarge)
+                    Text(text = group.level, style = MaterialTheme.typography.bodyLarge)
                     val startTime = formatTime(parseDate(group.items.first().time))
                     val endTime = formatTime(parseDate(group.items.last().time))
                     Text(
                         text = "$startTime - $endTime",
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
 
                 }
@@ -254,5 +255,8 @@ fun ErrorScreen(retryAction: () -> Unit) {
 
 @Composable
 fun LoadingScreen() {
-    CircularProgressIndicator()
+    Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
+        CircularProgressIndicator()
+    }
+
 }
