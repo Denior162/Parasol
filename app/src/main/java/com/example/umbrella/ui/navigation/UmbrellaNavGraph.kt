@@ -8,8 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.umbrella.ui.AppViewModelProvider
-import com.example.umbrella.ui.city.entry.CityEntryDestination
-import com.example.umbrella.ui.city.entry.CityEntryScreen
 import com.example.umbrella.ui.city.search.CitySearchDestination
 import com.example.umbrella.ui.city.search.CitySearchScreen
 import com.example.umbrella.ui.city.search.CitySearchViewModel
@@ -40,12 +38,6 @@ fun UmbrellaNavHost(
                     }
                 },
                 retryAction = indexViewModel::getUVIs,
-            )
-        }
-        composable(route = CityEntryDestination.route) {
-            CityEntryScreen(
-                onNavigateUp = { navController.navigateUp() },
-                navigateBack = { navController.popBackStack() }
             )
         }
         composable(route = CitySearchDestination.route) {
