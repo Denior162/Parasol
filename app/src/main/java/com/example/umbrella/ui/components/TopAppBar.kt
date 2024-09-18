@@ -24,7 +24,9 @@ fun HomeScreenTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     LargeTopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name)) },
+        title = {
+            Text(text = stringResource(id = R.string.app_name))
+        },
         navigationIcon = {
             IconButton(onClick = navDrawer) {
                 Icon(
@@ -35,7 +37,10 @@ fun HomeScreenTopAppBar(
         },
         actions = {
             IconButton(onClick = retryAction) {
-                Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(R.string.retry))
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(R.string.retry)
+                )
             }
         },
         scrollBehavior = scrollBehavior
@@ -47,20 +52,17 @@ fun HomeScreenTopAppBar(
 fun SecondaryTopAppBarWithBackAction(
     title: String,
     modifier: Modifier = Modifier,
-    canNavigateBack: Boolean,
     onNavigateUp: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null
 
 ) {
     TopAppBar(title = { Text(text = title) }, modifier = modifier, navigationIcon = {
-        if (canNavigateBack) {
-            IconButton(
-                onClick = { onNavigateUp }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back_button)
-                )
-            }
+        IconButton(
+            onClick = { onNavigateUp() }) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(R.string.back_button)
+            )
         }
     }, scrollBehavior = scrollBehavior)
 }

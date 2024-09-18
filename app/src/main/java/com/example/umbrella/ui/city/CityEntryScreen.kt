@@ -36,7 +36,6 @@ object CityEntryDestination : NavigationDestination {
 fun CityEntryScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
-    canNavigateBack: Boolean = true,
     viewModel: CityEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
 ) {
@@ -45,7 +44,6 @@ fun CityEntryScreen(
     Scaffold(topBar = {
         SecondaryTopAppBarWithBackAction(
             title = stringResource(id = CityEntryDestination.titleRes),
-            canNavigateBack = canNavigateBack,
             onNavigateUp = onNavigateUp
         )
     }) { innerPadding ->
