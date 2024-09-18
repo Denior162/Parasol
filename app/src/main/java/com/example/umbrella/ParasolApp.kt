@@ -6,6 +6,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.umbrella.ui.navigation.UmbrellaNavHost
 
 @Composable
-fun UmbrellaApp(navController: NavHostController = rememberNavController()) {
+fun ParasolApp(navController: NavHostController = rememberNavController()) {
     UmbrellaNavHost(navController = navController)
 }

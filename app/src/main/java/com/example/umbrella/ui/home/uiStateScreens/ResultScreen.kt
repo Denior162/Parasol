@@ -25,8 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.umbrella.model.Forecast
-import com.example.umbrella.model.UvResponse
+import com.example.umbrella.network.stopLightUVI.Forecast
+import com.example.umbrella.network.stopLightUVI.UvResponse
 import com.example.umbrella.ui.theme.extendedDark
 import com.example.umbrella.ui.theme.extendedLight
 import com.example.umbrella.ui.theme.utils.getCardColors

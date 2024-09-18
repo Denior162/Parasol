@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.umbrella.data.CitiesRepository
 import com.example.umbrella.data.CityEntity
-import com.example.umbrella.model.UvResponse
-import com.example.umbrella.network.IndexApi
+import com.example.umbrella.network.stopLightUVI.IndexApi
+import com.example.umbrella.network.stopLightUVI.UvResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

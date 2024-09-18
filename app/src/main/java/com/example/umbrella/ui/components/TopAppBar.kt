@@ -1,9 +1,11 @@
 package com.example.umbrella.ui.components
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,8 +22,9 @@ import com.example.umbrella.R
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreenTopAppBar(
     navDrawer: () -> Unit,
+    citySearch: () -> Unit,
     retryAction: () -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     LargeTopAppBar(
         title = {
@@ -36,12 +39,21 @@ fun HomeScreenTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = retryAction) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = stringResource(R.string.retry)
-                )
+            Row {
+                IconButton(onClick = citySearch) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(id = R.string.city_search)
+                    )
+                }
+                IconButton(onClick = retryAction) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(R.string.retry)
+                    )
+                }
             }
+
         },
         scrollBehavior = scrollBehavior
     )

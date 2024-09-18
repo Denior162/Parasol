@@ -1,6 +1,5 @@
-package com.example.umbrella.network
+package com.example.umbrella.network.stopLightUVI
 
-import com.example.umbrella.model.UvResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -10,8 +9,7 @@ private const val BASE_URL =
     "https://currentuvindex.com/api/v1/"
 
 private val retrofit = Retrofit.Builder()
-    .addConverterFactory(GsonConverterFactory.create()
-    )
+    .addConverterFactory(GsonConverterFactory.create())
     .baseUrl(BASE_URL)
     .build()
 

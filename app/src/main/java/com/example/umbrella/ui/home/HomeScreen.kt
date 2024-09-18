@@ -3,16 +3,11 @@ package com.example.umbrella.ui.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -20,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.umbrella.R
@@ -42,7 +36,7 @@ object HomeDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navigateToCityEntry: () -> Unit,
+    navigateToCitySearch: () -> Unit,
     retryAction: () -> Unit,
     indexUiState: StateFlow<IndexUiState>,
     modifier: Modifier,
@@ -55,27 +49,22 @@ fun HomeScreen(
     val selectedCityId by viewModel.selectedCityId.collectAsState()
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
         ModalDrawerSheet {
-            ExtendedFloatingActionButton(
-                onClick = navigateToCityEntry,
-
-                ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                Text(text = stringResource(R.string.add_city))
-            }
             CitiesForDrawer(cityList = homeUiState.citiesList,
                 selectedCityId = selectedCityId,
                 onCitySelected = { selectedCity ->
                     viewModel.setSelectedCity(selectedCity)
                     retryAction()
                     scope.launch { drawerState.apply { if (isClosed) open() else close() } }
-                })
+                }
+            )
         }
     }) {
         Scaffold(topBar = {
             HomeScreenTopAppBar(
                 navDrawer = { scope.launch { drawerState.apply { if (isClosed) open() else close() } } },
                 scrollBehavior = scrollBehavior,
-                retryAction = retryAction
+                citySearch = navigateToCitySearch,
+                retryAction = retryAction,
             )
         }) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {

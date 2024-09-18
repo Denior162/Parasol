@@ -8,4 +8,5 @@
     <string name="city_name">City name</string>
     <string name="save">Save</string>
     <string name="retry">Retry</string>
+    <string name="city_search">City Search</string>
 </resources>

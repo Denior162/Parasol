@@ -1,8 +1,5 @@
-package com.example.umbrella.model
+package com.example.umbrella.network.stopLightUVI
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class UvResponse(
     val ok: Boolean,
     val latitude: Double,
@@ -11,13 +8,11 @@ data class UvResponse(
     val forecast: List<Forecast>
 )
 
-@Serializable
 data class CurrentUv(
     val time: String,
     val uvi: Double
 )
 
-@Serializable
 data class Forecast(
     val time: String,
     val uvi: Double
