@@ -47,6 +47,8 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val selectedCityId by viewModel.selectedCityId.collectAsState()
+    val currentIndexUiState by indexUiState.collectAsState(IndexUiState.Loading)
+
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
         ModalDrawerSheet {
             CitiesForDrawer(cityList = homeUiState.citiesList,
@@ -67,11 +69,11 @@ fun HomeScreen(
                 retryAction = retryAction,
             )
         }) { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding)) {
-                val currentIndexUiState by indexUiState.collectAsState(IndexUiState.Loading)
-                Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                ) {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 8.dp)
+            ) {
                     when (currentIndexUiState) {
                         is IndexUiState.Loading -> LoadingScreen()
                         is IndexUiState.Success -> ResultScreen(
@@ -80,7 +82,6 @@ fun HomeScreen(
                         )
 
                         is IndexUiState.Error -> ErrorScreen(retryAction)
-                    }
                 }
             }
         }
