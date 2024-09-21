@@ -6,7 +6,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,11 +34,11 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ResultScreen(
-    uvResponse: UvResponse, modifier: Modifier
+    uvResponse: UvResponse
 ) {
     val forecastGroups = remember { groupForecastByIndexLevel(uvResponse.forecast) }
-    Column(modifier = modifier.padding(8.dp)) {
-        Card {
+    Column {
+        Card(modifier = Modifier.padding(4.dp)) {
             Text(
                 text = "${uvResponse.now.uvi}",
                 style = MaterialTheme.typography.displayLarge,
@@ -51,9 +50,7 @@ fun ResultScreen(
                 modifier = Modifier.padding(8.dp)
             )
         }
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        LazyColumn {
             items(forecastGroups) { group ->
                 ForecastGroupCard(group = group)
             }

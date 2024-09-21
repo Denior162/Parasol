@@ -2,6 +2,8 @@ package com.example.umbrella.ui.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -14,30 +16,40 @@ import com.example.umbrella.ui.city.search.CitySearchViewModel
 import com.example.umbrella.ui.home.HomeDestination
 import com.example.umbrella.ui.home.HomeScreen
 import com.example.umbrella.ui.home.HomeViewModel
+import com.example.umbrella.ui.welcome.WelcomeDestination
+import com.example.umbrella.ui.welcome.WelcomeScreen
 
 @Composable
-fun UmbrellaNavHost(
-    navController: NavHostController, modifier: Modifier = Modifier
+fun ParasolNavHost(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
 ) {
+    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val cities by homeViewModel.homeUiState.collectAsState()
     NavHost(
         navController = navController,
-        startDestination = HomeDestination.route,
+        startDestination = if (cities.citiesList.isEmpty()) WelcomeDestination.route else HomeDestination.route,
         modifier = modifier
     ) {
+        composable(route = WelcomeDestination.route) {
+            WelcomeScreen(navigateToCitySearch = {
+                navController.navigate(CitySearchDestination.route)
+            })
+        }
         composable(route = HomeDestination.route) {
-            val indexViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
             HomeScreen(
-                indexUiState = indexViewModel.indexUiState,
-                modifier = Modifier,
+                indexUiState = homeViewModel.indexUiState,
                 navigateToCitySearch = {
                     try {
                         navController.navigate(CitySearchDestination.route)
                     } catch (e: Exception) {
-                        Log.e("NavigationError", "Error navigating to CitySearchDestination", e)
-
+                        Log.e(
+                            "NavigationError",
+                            "Error navigating to CitySearchDestination", e
+                        )
                     }
                 },
-                retryAction = indexViewModel::getUVIs,
+                retryAction = homeViewModel::getUVIs,
             )
         }
         composable(route = CitySearchDestination.route) {

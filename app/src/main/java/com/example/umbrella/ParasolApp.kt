@@ -3,9 +3,9 @@ package com.example.umbrella
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.umbrella.ui.navigation.UmbrellaNavHost
+import com.example.umbrella.ui.navigation.ParasolNavHost
 
 @Composable
 fun ParasolApp(navController: NavHostController = rememberNavController()) {
-    UmbrellaNavHost(navController = navController)
+    ParasolNavHost(navController = navController)
 }

@@ -48,7 +48,7 @@ class HomeViewModel(citiesRepository: CitiesRepository) : ViewModel() {
         return _selectedCityId.value?.let { selectedId ->
             homeUiState.value.citiesList.find { it.id == selectedId }
         }?.let { Pair(it.latitude, it.longitude) }
-            ?: Pair(35.0, 50.0) // значения по умолчанию
+            ?: Pair(50.0, 36.10)
     }
 
     init {

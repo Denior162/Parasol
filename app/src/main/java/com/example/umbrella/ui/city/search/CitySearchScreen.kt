@@ -32,6 +32,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.umbrella.R
 import com.example.umbrella.network.geoCoding.City
 import com.example.umbrella.ui.AppViewModelProvider
+import com.example.umbrella.ui.components.ListOfCitiesInSearchScreen
+import com.example.umbrella.ui.home.HomeViewModel
 import com.example.umbrella.ui.home.uiStateScreens.LoadingScreen
 import com.example.umbrella.ui.navigation.NavigationDestination
 import kotlinx.coroutines.flow.StateFlow
@@ -52,13 +54,15 @@ fun CitySearchScreen(
     var query by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
 
+    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val city by homeViewModel.homeUiState.collectAsState()
     Scaffold(topBar = {
         SearchBar(modifier = Modifier.fillMaxWidth(), inputField = {
             SearchBarDefaults.InputField(
                 query = query,
                 onQueryChange = {
                     query = it
-                    viewModel.getSearchResult(query) // Обновляем результаты поиска
+                    viewModel.getSearchResult(query)
                 },
                 onSearch = {},
                 expanded = isExpanded,
@@ -83,9 +87,9 @@ fun CitySearchScreen(
                         val cities = (currentCitySearchUiState as SearchUiState.Success).result
                         SearchOutputCityList(
                             cities,
-                            onCitySelected = { /* Обработка выбора города */ },
+                            onCitySelected = { },
                             onSaveCity = { city ->
-                                viewModel.saveCity(city) // Сохраняем город при нажатии на иконку
+                                viewModel.saveCity(city)
                             },
                             navigateBack = navigateBack
                         )
@@ -101,7 +105,11 @@ fun CitySearchScreen(
     }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-
+            if (city.citiesList.isEmpty()) {
+                Text(" There are no cities, try adding one using the search above")
+            } else {
+                ListOfCitiesInSearchScreen(cityList = city.citiesList)
+            }
         }
     }
 }

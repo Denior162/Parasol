@@ -1,7 +1,6 @@
 package com.example.umbrella.ui.home
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.umbrella.R
@@ -39,7 +39,6 @@ fun HomeScreen(
     navigateToCitySearch: () -> Unit,
     retryAction: () -> Unit,
     indexUiState: StateFlow<IndexUiState>,
-    modifier: Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
@@ -72,13 +71,13 @@ fun HomeScreen(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 16.dp)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
             ) {
                     when (currentIndexUiState) {
                         is IndexUiState.Loading -> LoadingScreen()
                         is IndexUiState.Success -> ResultScreen(
-                            uvResponse = (currentIndexUiState as IndexUiState.Success).indexes,
-                            modifier = modifier.fillMaxWidth()
+                            uvResponse = (currentIndexUiState as IndexUiState.Success).indexes
                         )
 
                         is IndexUiState.Error -> ErrorScreen(retryAction)

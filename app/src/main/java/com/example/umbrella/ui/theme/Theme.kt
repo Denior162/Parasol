@@ -172,7 +172,7 @@ data class ColorFamily(
 )
 
 @Composable
-fun UmbrellaTheme(
+fun ParasolTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,

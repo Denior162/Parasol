@@ -4,14 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.umbrella.ui.theme.UmbrellaTheme
+import com.example.umbrella.ui.theme.ParasolTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            UmbrellaTheme {
+            ParasolTheme {
                 ParasolApp()
             }
         }

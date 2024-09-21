@@ -1,12 +1,11 @@
 <resources>
-    <string name="app_name">Parasol</string>
+    <string name="app_name" translatable="false">Parasol</string>
     <string name="back_button">Back</string>
     <string name="home">Home</string>
     <string name="add_city">Add city</string>
-    <string name="latitude">Latitude</string>
-    <string name="longitude">Longitude</string>
-    <string name="city_name">City name</string>
-    <string name="save">Save</string>
     <string name="retry">Retry</string>
     <string name="city_search">City Search</string>
+    <string name="add_first_city">Add the first city!</string>
+    <string name="welcome" translatable="false">welcome</string>
+    <string name="welcome_body">This app is here to help you track sun exposure and protect your skin.</string>
 </resources>

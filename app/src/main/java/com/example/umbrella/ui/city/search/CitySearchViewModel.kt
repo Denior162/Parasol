@@ -15,7 +15,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface SearchUiState {
-    data class Success(val result: List<City>) : SearchUiState // Изменено на List<City>
+    data class Success(val result: List<City>) : SearchUiState
     data object Error : SearchUiState
     data object Loading : SearchUiState
 }
@@ -32,7 +32,7 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
                 if (result.isNotEmpty()) {
                     _cities.value = SearchUiState.Success(result)
                 } else {
-                    _cities.value = SearchUiState.Error // Обработка пустого результата
+                    _cities.value = SearchUiState.Error
                 }
             } catch (e: IOException) {
                 Log.e("CitySearchViewModel", "Network error", e)
@@ -48,13 +48,13 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
     }
 
     fun saveCity(city: City) {
-        viewModelScope.launch(Dispatchers.IO) { // Запускаем в IO потоке
+        viewModelScope.launch(Dispatchers.IO) {
             val cityEntity = CityEntity(
                 name = city.display_name,
                 latitude = city.lat.toDouble(),
                 longitude = city.lon.toDouble()
             )
-            citiesRepository.insertCity(cityEntity) // Используем репозиторий для сохранения города
+            citiesRepository.insertCity(cityEntity)
         }
     }
 }

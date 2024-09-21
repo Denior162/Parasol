@@ -2,7 +2,6 @@ package com.example.umbrella.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -11,12 +10,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.umbrella.R
+import com.example.umbrella.ui.AppViewModelProvider
+import com.example.umbrella.ui.home.HomeViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,6 +28,9 @@ fun HomeScreenTopAppBar(
     retryAction: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
+    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val cities by homeViewModel.homeUiState.collectAsState()
+
     LargeTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
@@ -40,7 +45,8 @@ fun HomeScreenTopAppBar(
         },
         actions = {
             Row {
-                IconButton(onClick = citySearch) {
+
+            IconButton(onClick = citySearch) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = stringResource(id = R.string.city_search)
@@ -57,24 +63,4 @@ fun HomeScreenTopAppBar(
         },
         scrollBehavior = scrollBehavior
     )
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun SecondaryTopAppBarWithBackAction(
-    title: String,
-    modifier: Modifier = Modifier,
-    onNavigateUp: () -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior? = null
-
-) {
-    TopAppBar(title = { Text(text = title) }, modifier = modifier, navigationIcon = {
-        IconButton(
-            onClick = { onNavigateUp() }) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.back_button)
-            )
-        }
-    }, scrollBehavior = scrollBehavior)
 }
