@@ -12,13 +12,8 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.umbrella.R
-import com.example.umbrella.ui.AppViewModelProvider
-import com.example.umbrella.ui.home.HomeViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,9 +23,6 @@ fun HomeScreenTopAppBar(
     retryAction: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val cities by homeViewModel.homeUiState.collectAsState()
-
     LargeTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
