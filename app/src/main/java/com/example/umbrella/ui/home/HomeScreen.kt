@@ -67,7 +67,10 @@ fun HomeScreen(
                 retryAction = retryAction,
             )
         }) { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding)) {
+            Column(modifier = Modifier
+.padding(innerPadding)
+.nestedScroll(scrollBehavior.nestedScrollConnection)
+) {
                 val currentIndexUiState by indexUiState.collectAsState(IndexUiState.Loading)
                 Column(
                     modifier = Modifier.padding(horizontal = 8.dp)
