@@ -50,7 +50,7 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
     fun saveCity(city: City) {
         viewModelScope.launch(Dispatchers.IO) {
             val cityEntity = CityEntity(
-                name = city.display_name,
+                name = city.name,
                 latitude = city.lat.toDouble(),
                 longitude = city.lon.toDouble()
             )
