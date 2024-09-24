@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Umbrella"
+rootProject.name = "Parasol"
 include(":app")
  

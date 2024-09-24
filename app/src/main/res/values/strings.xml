@@ -5,7 +5,4 @@
     <string name="add_city">Add city</string>
     <string name="retry">Retry</string>
     <string name="city_search">City Search</string>
-    <string name="add_first_city">Add the first city!</string>
-    <string name="welcome" translatable="false">welcome</string>
-    <string name="welcome_body">This app is here to help you track sun exposure and protect your skin.</string>
 </resources>

@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.umbrella"
+    namespace = "com.example.parasol"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.umbrella"
+        applicationId = "com.example.parasol"
         minSdk = 31
         targetSdk = 35
         versionCode = 1
