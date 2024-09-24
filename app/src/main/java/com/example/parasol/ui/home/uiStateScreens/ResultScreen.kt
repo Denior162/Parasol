@@ -69,7 +69,7 @@ fun ResultScreen(
 
 @Composable
 fun ForecastGroupCard(group: ForecastGroup) {
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
     val extendedColorScheme = if (isSystemInDarkTheme()) extendedDark else extendedLight
     val cardColor = getCardColors(group.items.first().uvi, extendedColorScheme)
     Card(
