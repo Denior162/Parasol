@@ -5,4 +5,10 @@
     <string name="add_city">Add city</string>
     <string name="retry">Retry</string>
     <string name="city_search">City Search</string>
+    <string name="low_risk">Low risk</string>
+    <string name="moderate_risk">Moderate risk</string>
+    <string name="high_risk">High risk</string>
+    <string name="very_high_risk">Very high risk</string>
+    <string name="extremely_risk">Extremely risk</string>
+    <string name="uv_index_right_now">UV index right now</string>
 </resources>
