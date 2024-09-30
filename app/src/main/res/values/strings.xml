@@ -11,4 +11,5 @@
     <string name="very_high_risk">Very high risk</string>
     <string name="extremely_risk">Extremely risk</string>
     <string name="uv_index_right_now">UV index right now</string>
+    <string name="no_cities_text">No cities, try adding one using the search above</string>
 </resources>

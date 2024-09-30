@@ -1,21 +1,22 @@
 package com.example.parasol.ui.home.uiStateScreens
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,25 +40,37 @@ import com.example.parasol.ui.components.getCardColors
 import com.example.parasol.ui.home.UvRiskLevel
 import com.example.parasol.ui.theme.extendedDark
 import com.example.parasol.ui.theme.extendedLight
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+
 
 @Composable
 fun ResultScreen(uvResponse: UvResponse) {
     val forecastGroups = remember { groupForecastByIndexLevel(uvResponse.forecast) }
     LazyColumn {
         item {
-            Card(modifier = Modifier.padding(4.dp)) {
-                Text(
-                    text = "${uvResponse.now.uvi}",
-                    style = MaterialTheme.typography.displayLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Text(
-                    text = stringResource(R.string.uv_index_right_now),
-                    style = MaterialTheme.typography.displaySmall,
-                    modifier = Modifier.padding(8.dp)
-                )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "${uvResponse.now.uvi}",
+                        style = MaterialTheme.typography.displayLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.uv_index_right_now),
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                }
+
             }
         }
         items(forecastGroups) { group ->
@@ -65,7 +78,6 @@ fun ResultScreen(uvResponse: UvResponse) {
         }
     }
 }
-
 
 @Composable
 fun ForecastGroupCard(group: ForecastGroup) {
@@ -84,12 +96,13 @@ fun ForecastGroupCard(group: ForecastGroup) {
         colors = cardColor
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            Row {
-                Column(modifier = Modifier.weight(1f)) {
+            Row(
+                Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column {
                     TextLevelRisk(group = group.level)
                     ForecastTimeRange(group.items.first().time, group.items.last().time)
                 }
-                Spacer(modifier = Modifier.width(8.dp)) // Добавление пробела между элементами
                 IconButton(onClick = { isExpanded = !isExpanded }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
@@ -100,16 +113,14 @@ fun ForecastGroupCard(group: ForecastGroup) {
 
         }
         if (isExpanded) {
-            AnimatedVisibility(visible = isExpanded) {
-                Column {
-                    group.items.forEach { forecast ->
-                        Row {
-                            Text(text = "${forecast.uvi}", modifier = Modifier.padding(8.dp))
-                            Text(
-                                text = formatTime(parseDate(forecast.time)),
-                                modifier = Modifier.padding(8.dp)
-                            )
-                        }
+            Column {
+                group.items.forEach { forecast ->
+                    Row {
+                        Text(text = "${forecast.uvi}", modifier = Modifier.padding(8.dp))
+                        Text(
+                            text = formatTime(parseDate(forecast.time)),
+                            modifier = Modifier.padding(8.dp)
+                        )
                     }
                 }
             }
@@ -137,7 +148,6 @@ fun ForecastTimeRange(start: String, end: String) {
     val endTime = formatTime(parseDate(end))
     Text(text = "$startTime - $endTime", style = MaterialTheme.typography.bodyMedium)
 }
-
 
 fun groupForecastByIndexLevel(forecast: List<Forecast>): List<ForecastGroup> {
     val groups = mutableListOf<ForecastGroup>()
@@ -168,17 +178,20 @@ fun getIndexLevel(uvi: Double): UvRiskLevel {
 
 data class ForecastGroup(val level: UvRiskLevel, val items: MutableList<Forecast>)
 
-fun parseDate(dateString: String): LocalDateTime {
+fun parseDate(dateString: String): ZonedDateTime {
     return try {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        LocalDateTime.parse(dateString, formatter)
+        // Парсим строку даты и преобразуем в ZonedDateTime с учетом временной зоны UTC
+        ZonedDateTime.parse(dateString, formatter.withZone(ZoneId.of("UTC")))
     } catch (e: Exception) {
-        // Обработка ошибки, возможно, вернуть текущее время или логировать ошибку
-        LocalDateTime.now()
+        // Обработка ошибки, возможно, вернуть текущее время в текущей временной зоне или логировать ошибку
+        ZonedDateTime.now()
     }
 }
 
 
-fun formatTime(localDateTime: LocalDateTime): String {
-    return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+fun formatTime(zonedDateTime: ZonedDateTime): String {
+    // Форматируем время с учетом временной зоны устройства пользователя
+    return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault())
+        .format(DateTimeFormatter.ofPattern("HH:mm"))
 }

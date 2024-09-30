@@ -22,10 +22,11 @@ fun HomeScreenTopAppBar(
     citySearch: () -> Unit,
     retryAction: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
+    textInTopBar: String
 ) {
     LargeTopAppBar(
         title = {
-            Text(text = stringResource(id = R.string.app_name))
+            Text(text = textInTopBar)
         },
         navigationIcon = {
             IconButton(onClick = navDrawer) {

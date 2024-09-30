@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.parasol.R
@@ -42,37 +43,45 @@ fun HomeScreen(
     indexUiState: StateFlow<IndexUiState>,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+
+    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val city by homeViewModel.homeUiState.collectAsState()
+
     val homeUiState by viewModel.homeUiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val selectedCityId by viewModel.selectedCityId.collectAsState()
     val currentIndexUiState by indexUiState.collectAsState(IndexUiState.Loading)
+    fun drawerAction() {
+        scope.launch {
+            drawerState.apply {
+                if (isClosed) open()
+                else close()
+            }
+        }
+    }
 
     CitiesModalDrawer(
         cityList = homeUiState.citiesList,
+
         onCitySelected = { selectedCity ->
             Log.d("CitiesModalDrawer", "City selected: ${selectedCity.name}")
             viewModel.setSelectedCity(selectedCity)
+            drawerAction()
             retryAction()
-            scope.launch {
-                drawerState.apply {
-                    if (isClosed) open() else close()
-                }
-            }
         },
         selectedCityId = selectedCityId,
-        drawerState = drawerState
+        drawerState = drawerState, drawerAction = { drawerAction() }
     )
-
-
     {
         Scaffold(topBar = {
             HomeScreenTopAppBar(
-                navDrawer = { scope.launch { drawerState.apply { if (isClosed) open() else close() } } },
+                navDrawer = { drawerAction() },
                 scrollBehavior = scrollBehavior,
                 citySearch = navigateToCitySearch,
-                retryAction = retryAction,
+                retryAction = { retryAction() },
+                textInTopBar = stringResource(id = R.string.app_name)
             )
         }, contentWindowInsets = WindowInsets(bottom = 0.dp)) { innerPadding ->
             Column(

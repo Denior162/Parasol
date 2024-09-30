@@ -15,7 +15,7 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-interface GeocodingApi {
+interface GeocodingApiSearchCity {
     @GET("search")
     suspend fun searchCities(
         @Query("q") cityName: String,
@@ -23,8 +23,9 @@ interface GeocodingApi {
     ): List<City>
 }
 
+
 object SearchCityApi {
-    val retrofitService: GeocodingApi by lazy {
-        retrofit.create(GeocodingApi::class.java)
+    val retrofitService: GeocodingApiSearchCity by lazy {
+        retrofit.create(GeocodingApiSearchCity::class.java)
     }
 }

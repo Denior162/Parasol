@@ -1,7 +1,6 @@
 package com.example.parasol.network.stopLightUVI
 
 data class UvResponse(
-    val ok: Boolean,
     val latitude: Double,
     val longitude: Double,
     val now: CurrentUv,

@@ -12,10 +12,15 @@ abstract class CitiesDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var Instance: CitiesDatabase? = null
-        fun getDatabase(context: Context): CitiesDatabase {
+        fun getDatabase(context: Context):
+                CitiesDatabase {
             return Instance ?: synchronized(this) {
                 return Instance ?: synchronized(this) {
-                    Room.databaseBuilder(context, CitiesDatabase::class.java, "city_database")
+                    Room.databaseBuilder(
+                        context,
+                        CitiesDatabase::class.java,
+                        "city_database"
+                    )
                         .build()
                         .also { Instance = it }
                 }

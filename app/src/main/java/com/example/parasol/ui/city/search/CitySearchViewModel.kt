@@ -11,14 +11,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
-sealed interface SearchUiState {
-    data class Success(val result: List<City>) : SearchUiState
-    data object Error : SearchUiState
-    data object Loading : SearchUiState
+sealed class SearchUiState {
+    data class Success(val result: List<City>) : SearchUiState()
+    data object Error : SearchUiState()
+    data object Loading : SearchUiState()
 }
+
 
 class CitySearchViewModel(private val citiesRepository: CitiesRepository) : ViewModel() {
     private val _cities = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
@@ -29,23 +28,22 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
             _cities.value = SearchUiState.Loading
             try {
                 val result = SearchCityApi.retrofitService.searchCities(cityName)
-                if (result.isNotEmpty()) {
-                    _cities.value = SearchUiState.Success(result)
+                _cities.value = if (result.isNotEmpty()) {
+                    SearchUiState.Success(result)
                 } else {
-                    _cities.value = SearchUiState.Error
+                    SearchUiState.Error
                 }
-            } catch (e: IOException) {
-                Log.e("CitySearchViewModel", "Network error", e)
-                _cities.value = SearchUiState.Error
-            } catch (e: HttpException) {
-                Log.e("CitySearchViewModel", "HTTP error", e)
-                _cities.value = SearchUiState.Error
             } catch (e: Exception) {
-                Log.e("CitySearchViewModel", "Unexpected error", e)
-                _cities.value = SearchUiState.Error
+                handleError(e)
             }
         }
     }
+
+    private fun handleError(e: Throwable) {
+        Log.e("CitySearchViewModel", "Error occurred", e)
+        _cities.value = SearchUiState.Error
+    }
+
 
     fun saveCity(city: City) {
         viewModelScope.launch(Dispatchers.IO) {

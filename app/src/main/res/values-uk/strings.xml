@@ -11,5 +11,6 @@
     <string name="high_risk">Високий ризик</string>
     <string name="very_high_risk">Дуже високий ризик</string>
     <string name="extremely_risk">Екстремальний ризик</string>
-    <string name="uv_index_right_now">Індекс UV зараз</string>
+    <string name="uv_index_right_now">УФ індекс зараз</string>
+    <string name="no_cities_text">Немає міст, спробуйте додати за допомогою пошуку вище</string>
 </resources>

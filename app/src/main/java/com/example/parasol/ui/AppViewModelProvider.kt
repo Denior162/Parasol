@@ -5,14 +5,17 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.parasol.ParasolApplication
+import com.example.parasol.data.UserPreferencesRepository
 import com.example.parasol.ui.city.search.CitySearchViewModel
 import com.example.parasol.ui.home.HomeViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
+            val userPreferencesRepository = UserPreferencesRepository(parasolApplication())
             HomeViewModel(
-                parasolApplication().container.citiesRepository
+                citiesRepository = parasolApplication().container.citiesRepository,
+                userPreferencesRepository = userPreferencesRepository
             )
         }
         initializer {
