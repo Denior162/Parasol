@@ -1,6 +1,7 @@
 package com.example.parasol.ui.city.search
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,10 +34,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.parasol.R
+import com.example.parasol.data.CityEntity
 import com.example.parasol.navigation.NavigationDestination
 import com.example.parasol.network.geoCoding.City
 import com.example.parasol.ui.AppViewModelProvider
-import com.example.parasol.ui.components.ListOfCitiesInSearchScreen
 import com.example.parasol.ui.home.HomeViewModel
 import com.example.parasol.ui.home.uiStateScreens.ErrorScreen
 import com.example.parasol.ui.home.uiStateScreens.LoadingScreen
@@ -54,7 +56,7 @@ fun CitySearchScreen(
     viewModel: CitySearchViewModel = viewModel(factory = AppViewModelProvider.Factory),
     searchUiState: StateFlow<SearchUiState>
 ) {
-    var query by remember { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
 
     val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -96,6 +98,7 @@ fun CitySearchScreen(
                             onSaveCity = { city ->
                                 viewModel.saveCity(city) // Сохраняем город при нажатии на иконку
                             },
+
                             navigateBack = navigateBack
                         )
                     }
@@ -114,7 +117,9 @@ fun CitySearchScreen(
             if (city.citiesList.isEmpty()) {
                 Text(stringResource(R.string.no_cities_text))
             } else {
-                ListOfCitiesInSearchScreen(cityList = city.citiesList)
+                ListOfCitiesInSearchScreen(cityList = city.citiesList, deleteCity = { city ->
+                    viewModel.deleteCity(city)
+                })
             }
         }
     }
@@ -157,6 +162,47 @@ fun SearchOutputCityList(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ListOfCitiesInSearchScreen(
+    cityList: List<CityEntity>,
+    deleteCity: (CityEntity) -> Unit
+) {
+    LazyColumn {
+        item { Text(text = "Вже додані міста", modifier = Modifier.padding(4.dp)) }
+
+        items(items = cityList) { city ->
+            CityElementInSearch(city = city, deleteCity = { deleteCity(city) })
+        }
+    }
+}
+
+@Composable
+fun CityElementInSearch(
+    city: CityEntity,
+    deleteCity: () -> Unit,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+
+        ) {
+            Text(text = city.name)
+            IconButton(onClick = deleteCity) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "delete an icon")
+            }
+        }
+
     }
 }
 

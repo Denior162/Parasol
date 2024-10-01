@@ -8,6 +8,8 @@ import com.example.parasol.data.CityEntity
 import com.example.parasol.network.geoCoding.City
 import com.example.parasol.network.geoCoding.SearchCityApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,14 +20,24 @@ sealed class SearchUiState {
     data object Loading : SearchUiState()
 }
 
-
 class CitySearchViewModel(private val citiesRepository: CitiesRepository) : ViewModel() {
     private val _cities = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
     val cities: StateFlow<SearchUiState> = _cities
 
+    private var searchJob: Job? = null
+    private val minQueryLength = 3
+    private val debounceDelay = 1000L // Delay in milliseconds
+
     fun getSearchResult(cityName: String) {
-        viewModelScope.launch {
+        if (cityName.length < minQueryLength) return // Ignore short queries
+
+        searchJob?.cancel() // Cancel the previous job if it's still running
+
+        searchJob = viewModelScope.launch {
+            delay(debounceDelay) // Wait for the debounce period
+
             _cities.value = SearchUiState.Loading
+
             try {
                 val result = SearchCityApi.retrofitService.searchCities(cityName)
                 _cities.value = if (result.isNotEmpty()) {
@@ -44,7 +56,6 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
         _cities.value = SearchUiState.Error
     }
 
-
     fun saveCity(city: City) {
         viewModelScope.launch(Dispatchers.IO) {
             val cityEntity = CityEntity(
@@ -53,6 +64,13 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
                 longitude = city.lon.toDouble()
             )
             citiesRepository.insertCity(cityEntity)
+        }
+    }
+
+
+    fun deleteCity(city: CityEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            citiesRepository.deleteCity(city)
         }
     }
 }

@@ -181,17 +181,14 @@ data class ForecastGroup(val level: UvRiskLevel, val items: MutableList<Forecast
 fun parseDate(dateString: String): ZonedDateTime {
     return try {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        // Парсим строку даты и преобразуем в ZonedDateTime с учетом временной зоны UTC
         ZonedDateTime.parse(dateString, formatter.withZone(ZoneId.of("UTC")))
     } catch (e: Exception) {
-        // Обработка ошибки, возможно, вернуть текущее время в текущей временной зоне или логировать ошибку
         ZonedDateTime.now()
     }
 }
 
 
 fun formatTime(zonedDateTime: ZonedDateTime): String {
-    // Форматируем время с учетом временной зоны устройства пользователя
     return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault())
         .format(DateTimeFormatter.ofPattern("HH:mm"))
 }

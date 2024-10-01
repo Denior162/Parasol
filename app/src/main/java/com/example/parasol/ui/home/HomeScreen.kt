@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,10 +42,6 @@ fun HomeScreen(
     indexUiState: StateFlow<IndexUiState>,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-
-    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val city by homeViewModel.homeUiState.collectAsState()
-
     val homeUiState by viewModel.homeUiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -88,7 +83,6 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp)
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .fillMaxSize()
             ) {
                 when (currentIndexUiState) {

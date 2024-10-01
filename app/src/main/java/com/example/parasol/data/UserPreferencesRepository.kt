@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.map
 private const val USER_PREFERENCES_NAME = "user_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = USER_PREFERENCES_NAME)
 
-class UserPreferencesRepository(private val context: Context) {
+//@Singleton
+class UserPreferencesRepository //@Inject constructor
+    (private val context: Context) {
 
     private object PreferencesKeys {
         val SELECTED_CITY = stringPreferencesKey("selected_city")

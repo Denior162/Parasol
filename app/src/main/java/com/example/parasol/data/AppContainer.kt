@@ -5,7 +5,11 @@ import android.content.Context
 interface AppContainer {
     val citiesRepository: CitiesRepository
 }
-class AppDataContainer(private val context: Context) : AppContainer {
+
+class AppDataContainer //@Inject constructor
+    (
+    private val context: Context
+) : AppContainer {
     override val citiesRepository: CitiesRepository by lazy {
         OfflineCitiesRepository(CitiesDatabase.getDatabase(context).cityDao())
     }
