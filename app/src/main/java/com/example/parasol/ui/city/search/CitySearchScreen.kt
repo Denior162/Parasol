@@ -1,9 +1,7 @@
 package com.example.parasol.ui.city.search
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -68,7 +66,7 @@ fun CitySearchScreen(
                 query = query,
                 onQueryChange = {
                     query = it
-                    viewModel.getSearchResult(query) // Обновляем результаты поиска
+                    viewModel.getSearchResult(query)
                 },
                 placeholder = { Text(text = "Пошук міста") },
                 onSearch = {},
@@ -136,9 +134,9 @@ fun SearchOutputCityList(
         items(cities) { city ->
             Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                 Card(
+                    onClick = { onCitySelected },
                     modifier = Modifier
                         .padding(8.dp)
-                        .clickable { onCitySelected(city) }
                         .fillMaxWidth()
                 ) {
                     Row(
@@ -206,33 +204,3 @@ fun CityElementInSearch(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CitySearchBar(
-    content: @Composable (ColumnScope.() -> Unit),
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null
-) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-    var query by remember { mutableStateOf("") }
-
-    SearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                query = query,
-                onQueryChange = { query = it }, // Обновление состояния запроса
-                onSearch = { /* Здесь вы можете обработать действие поиска */ },
-                expanded = isExpanded,
-                onExpandedChange = { isExpanded = it }, // Изменение состояния расширения
-                placeholder = placeholder,
-                leadingIcon = leadingIcon,
-                trailingIcon = trailingIcon,
-            )
-        },
-        expanded = isExpanded,
-        onExpandedChange = { isExpanded = it }
-    ) {
-        content()
-    }
-}

@@ -50,7 +50,7 @@ fun CitiesModalDrawer(
                         )
                         IconButton(onClick = drawerAction) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.MenuOpen,
+                                imageVector = Icons.AutoMirrored.Default.MenuOpen,
                                 contentDescription = "Close drawer"
                             )
                         }

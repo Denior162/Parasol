@@ -21,77 +21,114 @@ import java.io.IOException
 sealed class IndexUiState {
     data object Loading : IndexUiState()
     data class Success(val indexes: UvResponse) : IndexUiState()
-    data object Error : IndexUiState()
+    data class Error(val message: String) : IndexUiState() // Ошибка с сообщением
 }
 
-//@HiltViewModel
-class HomeViewModel //@Inject constructor
-    (
+class HomeViewModel(
     private val citiesRepository: CitiesRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
-    private val _indexUiState =
-        MutableStateFlow<IndexUiState>(IndexUiState.Loading)
+    private val _indexUiState = MutableStateFlow<IndexUiState>(IndexUiState.Loading)
     val indexUiState: StateFlow<IndexUiState> = _indexUiState
 
     private var _selectedCityId = MutableStateFlow<Int?>(null)
     val selectedCityId: StateFlow<Int?> = _selectedCityId
 
     val homeUiState: StateFlow<HomeUiState> =
-        citiesRepository.getFullListOfCities().map { HomeUiState(it) }.stateIn(
-            scope = viewModelScope, started = SharingStarted.WhileSubscribed(
-                TIMEOUT_MILLIS
-            ), initialValue = HomeUiState()
+        citiesRepository.getFullListOfCities().map { cities ->
+            if (cities.isEmpty()) {
+                _indexUiState.value =
+                    IndexUiState.Error("Нет доступных городов") // Устанавливаем ошибку
+                HomeUiState() // Возвращаем пустое состояние HomeUiState
+            } else {
+                HomeUiState(cities) // Возвращаем состояние с городами
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = HomeUiState()
         )
-
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
 
     init {
         viewModelScope.launch {
             userPreferencesRepository.selectedCityFlow.collect { cityId ->
                 _selectedCityId.value = cityId?.toInt()
+                if (_selectedCityId.value != null) {
+                    loadCityCoordinatesAndGetUV() // Загружаем координаты и получаем UV индекс
+                } else {
+                    Log.w("HomeViewModel", "No city selected in DataStore.")
+                    _indexUiState.value =
+                        IndexUiState.Error("Город не выбран") // Устанавливаем ошибку
+                }
+            }
+        }
+
+        // Запускаем загрузку данных о городах при инициализации
+        loadCities()
+    }
+
+    private fun loadCities() {
+        viewModelScope.launch {
+            citiesRepository.getFullListOfCities().collect { cities ->
+                if (cities.isEmpty()) {
+                    _indexUiState.value = IndexUiState.Error("Нет доступных городов")
+                } else {
+                    // Если в DataStore есть выбранный город, используем его
+                    if (_selectedCityId.value == null) {
+                        _selectedCityId.value =
+                            cities.first().id // Устанавливаем первый город только если нет выбранного
+                        loadCityCoordinatesAndGetUV() // Получаем UV индекс для первого города
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadCityCoordinatesAndGetUV() {
+        viewModelScope.launch {
+            _selectedCityId.value?.let { selectedId ->
+                val cityFlow = citiesRepository.getOneCity(selectedId)
+
+                cityFlow.collect { city ->
+                    if (city != null) {
+                        getUVIs(
+                            city.latitude,
+                            city.longitude
+                        ) // Получаем UV индекс для координат города
+                    } else {
+                        Log.w("HomeViewModel", "City not found for ID: $selectedId")
+                        _indexUiState.value =
+                            IndexUiState.Error("Город не найден") // Устанавливаем ошибку
+                    }
+                }
+            } ?: run {
+                Log.w("HomeViewModel", "Selected city ID is null.")
+                _indexUiState.value =
+                    IndexUiState.Error("ID города не найден") // Устанавливаем ошибку
             }
         }
     }
 
     fun setSelectedCity(city: CityEntity?) {
-        if (city != null) {
+        if (city != null && city.id != _selectedCityId.value) { // Проверяем, отличается ли выбранный город от текущего
             _selectedCityId.value = city.id
             viewModelScope.launch {
                 userPreferencesRepository.saveSelectedCity(city.id.toString())
             }
-            getUVIs()
+            getUVIs(city.latitude, city.longitude) // Вызов getUVIs с координатами выбранного города
         }
     }
 
-    fun getUVIs() {
+    private fun getUVIs(latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             _indexUiState.value = IndexUiState.Loading
             try {
-                _selectedCityId.value?.let { selectedId ->
-                    val cityFlow = citiesRepository.getOneCity(selectedId)
+                Log.d("HomeViewModel", "Fetching UV Index for coordinates: ($latitude, $longitude)")
 
-                    cityFlow.collect { city ->
-                        if (city != null) {
-                            val (latitude, longitude) = Pair(city.latitude, city.longitude)
-                            Log.d(
-                                "HomeViewModel",
-                                "Fetching UV Index for coordinates: ($latitude, $longitude)"
-                            )
-                            val response = IndexApi.retrofitService.getIndexes(latitude, longitude)
-                            _indexUiState.value = IndexUiState.Success(response)
-                        } else {
-                            Log.w("HomeViewModel", "City not found for ID: $selectedId")
-                            _indexUiState.value = IndexUiState.Error
-                        }
-                    }
-                } ?: run {
-                    Log.w("HomeViewModel", "Selected city ID is null.")
-                    _indexUiState.value = IndexUiState.Error
-                }
+                val response = IndexApi.retrofitService.getIndexes(latitude, longitude)
+                _indexUiState.value = IndexUiState.Success(response)
+
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -102,21 +139,27 @@ class HomeViewModel //@Inject constructor
         when (exception) {
             is IOException -> {
                 Log.e("HomeViewModel", "Network error: ${exception.message}")
-                _indexUiState.value = IndexUiState.Error
+                _indexUiState.value = IndexUiState.Error("Ошибка сети: ${exception.message}")
             }
 
             is HttpException -> {
                 Log.e("HomeViewModel", "HTTP error: ${exception.message}")
-                _indexUiState.value = IndexUiState.Error
+                _indexUiState.value = IndexUiState.Error("Ошибка HTTP: ${exception.message}")
             }
 
             else -> {
                 Log.e("HomeViewModel", "Unexpected error: ${exception.message}")
-                _indexUiState.value = IndexUiState.Error
+                _indexUiState.value = IndexUiState.Error("Неожиданная ошибка: ${exception.message}")
             }
         }
     }
+
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
 }
+
+
 
 
 data class HomeUiState(

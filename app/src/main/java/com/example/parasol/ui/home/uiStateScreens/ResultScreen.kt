@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -46,14 +47,14 @@ import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun ResultScreen(uvResponse: UvResponse) {
+fun ResultScreen(uvResponse: UvResponse, modifier: Modifier) {
     val forecastGroups = remember { groupForecastByIndexLevel(uvResponse.forecast) }
-    LazyColumn {
+    LazyColumn(state = rememberLazyListState(), modifier = modifier) {
         item {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(vertical = 4.dp),
                 elevation = CardDefaults.cardElevation(8.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -76,6 +77,7 @@ fun ResultScreen(uvResponse: UvResponse) {
         items(forecastGroups) { group ->
             ForecastGroupCard(group = group)
         }
+
     }
 }
 
@@ -87,7 +89,7 @@ fun ForecastGroupCard(group: ForecastGroup) {
     Card(
         onClick = { isExpanded = !isExpanded },
         modifier = Modifier
-            .padding(4.dp)
+            .padding(vertical = 4.dp)
             .animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow

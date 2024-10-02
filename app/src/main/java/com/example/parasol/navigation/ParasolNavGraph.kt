@@ -39,7 +39,7 @@ fun ParasolNavHost(
                         )
                     }
                 },
-                retryAction = homeViewModel::getUVIs,
+                retryAction = {},
             )
         }
         composable(route = CitySearchDestination.route) {
