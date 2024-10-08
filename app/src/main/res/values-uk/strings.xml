@@ -12,4 +12,7 @@
     <string name="extremely_risk">Екстремальний ризик</string>
     <string name="uv_index_right_now">УФ індекс зараз</string>
     <string name="no_cities_text">Немає міст, спробуйте додати за допомогою пошуку вище</string>
+    <string name="open_menu">Відкрити меню</string>
+    <string name="expand">Розгорнути</string>
+    <string name="collapse">Згорнути</string>
 </resources>

@@ -1,10 +1,11 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.compose.compiler)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
-    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
-    id("kotlin-kapt")
+    alias(libs.plugins.android.application) // Android application plugin
+    alias(libs.plugins.jetbrains.kotlin.android) // Kotlin Android plugin
+    alias(libs.plugins.compose.compiler) // Jetpack Compose compiler plugin
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10" // Kotlin serialization plugin
+    id("com.google.devtools.ksp") version "2.0.20-1.0.24" // Kotlin Symbol Processing (KSP) plugin
+    id("kotlin-kapt") // Kotlin Annotation Processing Tool (KAPT)
+    id("com.google.dagger.hilt.android") // Dagger Hilt for dependency injection
 }
 
 android {
@@ -35,6 +36,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -53,51 +55,53 @@ android {
 }
 
 dependencies {
-    // Библиотеки AndroidX
-    implementation(libs.androidx.core.ktx) // Расширения для Core
-    implementation(libs.androidx.lifecycle.runtime.ktx) // Жизненный цикл для Kotlin
-    implementation(libs.androidx.activity.compose) // Поддержка Jetpack Compose для Activity
-    implementation(platform(libs.androidx.compose.bom)) // BOM для Compose
-    implementation(libs.androidx.ui) // Основные компоненты UI
-    implementation(libs.androidx.ui.graphics) // Графические компоненты UI
-    implementation(libs.androidx.ui.tooling.preview) // Инструменты для предварительного просмотра UI
-    implementation(libs.androidx.material3) // Material Design 3
-    implementation(libs.androidx.navigation.runtime.ktx) // Навигация с поддержкой Kotlin
-    implementation(libs.androidx.navigation.compose) // Навигация для Jetpack Compose
-    implementation(libs.androidx.material.icons.extended)
+    // AndroidX Libraries
+    implementation(libs.androidx.core.ktx) // Core KTX extensions
+    implementation(libs.androidx.lifecycle.runtime.ktx) // Lifecycle extensions for Kotlin
+    implementation(libs.androidx.activity.compose) // Jetpack Compose support for Activity
+    implementation(platform(libs.androidx.compose.bom)) // BOM for Compose libraries
+    implementation(libs.androidx.ui) // Core UI components for Jetpack Compose
+    implementation(libs.androidx.ui.graphics) // Graphics components for Jetpack Compose UI
+    implementation(libs.androidx.ui.tooling.preview) // Preview tooling for Jetpack Compose UI
+    implementation(libs.androidx.material3) // Material Design 3 components
+    implementation(libs.androidx.navigation.runtime.ktx) // Navigation component with Kotlin support
+    implementation(libs.androidx.navigation.compose) // Navigation for Jetpack Compose
 
-    // Retrofit для работы с REST API
-    implementation(libs.retrofit2.converter.gson) // Конвертер Gson для Retrofit
-    implementation(libs.retrofit) // Основная библиотека Retrofit
-    implementation(libs.converter.gson) // Альтернативный способ добавления конвертера Gson
-    implementation(libs.retrofit2.kotlinx.serialization.converter) // Конвертер для Kotlinx Serialization
+    // Retrofit for REST API interaction
+    implementation(libs.retrofit2.converter.gson) // Gson converter for Retrofit
+    implementation(libs.retrofit) // Core Retrofit library
+    implementation(libs.converter.gson) // Alternative way to add Gson converter (if needed)
+    implementation(libs.retrofit2.kotlinx.serialization.converter) // Converter for Kotlinx Serialization
 
-    // Ktor для асинхронного HTTP-клиента
-    implementation(libs.ktor.client.content.negotiation) // Поддержка контентной Negotiation в Ktor
-    implementation(libs.ktor.client.json) // Поддержка JSON в Ktor
-    implementation(libs.ktor.serialization.kotlinx.json) // Kotlinx Serialization для Ktor
-    implementation(libs.ktor.client.core) // Основные компоненты Ktor клиента
-    implementation(libs.ktor.client.serialization) // Опциональная поддержка сериализации JSON в Ktor
+    // Ktor for asynchronous HTTP client operations
+    implementation(libs.ktor.client.content.negotiation) // Content negotiation support in Ktor client
+    implementation(libs.ktor.client.json) // JSON support in Ktor client
+    implementation(libs.ktor.serialization.kotlinx.json) // Kotlinx Serialization support in Ktor client
+    implementation(libs.ktor.client.core) // Core components of Ktor client
+    implementation(libs.ktor.client.serialization) // Optional JSON serialization support in Ktor
 
-    // Room для работы с локальными базами данных
-    implementation(libs.androidx.room.runtime) // Основная библиотека Room
-    ksp(libs.androidx.room.compiler) // Компилятор аннотаций Room (KSP)
-    kapt(libs.hilt.android.compiler) // Компилятор аннотаций Hilt (KAPT)
-    implementation(libs.androidx.room.ktx) // Расширения Room для Kotlin
+    // Room for local database management
+    implementation(libs.androidx.room.runtime) // Core Room library for database operations
+    ksp(libs.androidx.room.compiler) // Room annotation processor (KSP)
+    implementation(libs.androidx.room.ktx) // Kotlin extensions for Room
 
-    // Datastore для хранения настроек и предпочтений
-    implementation(libs.androidx.datastore.preferences) // Datastore с предпочтениями
+    // Datastore for storing preferences and settings
+    implementation(libs.androidx.datastore.preferences) // Preferences DataStore
 
-    // Зависимости для тестирования
-    testImplementation(libs.junit) // JUnit для юнит-тестов
-    androidTestImplementation(libs.androidx.junit) // JUnit для инструментальных тестов Android
-    androidTestImplementation(libs.androidx.espresso.core) // Espresso для UI-тестирования
+    implementation(libs.hilt.android) // Hilt Android dependency injection library
+    kapt(libs.hilt.android.compiler) // Hilt compiler for annotation processing
+    implementation(libs.androidx.hilt.navigation.compose)
 
-    androidTestImplementation(platform(libs.androidx.compose.bom)) // BOM для Compose в тестах
-    androidTestImplementation(libs.androidx.ui.test.junit4) // Тестирование UI компонентов Compose
+    // Testing dependencies
+    testImplementation(libs.junit) // JUnit for unit testing
+    androidTestImplementation(libs.androidx.junit) // JUnit for Android instrumentation tests
+    androidTestImplementation(libs.androidx.espresso.core) // Espresso for UI testing
 
-    debugImplementation(libs.androidx.ui.tooling) // Инструменты отладки UI компонентов Compose
-    debugImplementation(libs.androidx.ui.test.manifest) // Манифест для тестирования UI компонентов Compose
+    androidTestImplementation(platform(libs.androidx.compose.bom)) // BOM for Compose in tests
+    androidTestImplementation(libs.androidx.ui.test.junit4) // UI testing tools for Jetpack Compose
 
-    implementation(kotlin("script-runtime")) // Зависимость для работы с Kotlin скриптами
+    debugImplementation(libs.androidx.ui.tooling) // Debugging tools for Jetpack Compose UI components
+    debugImplementation(libs.androidx.ui.test.manifest) // Manifest file for UI testing
+
+    implementation(kotlin("script-runtime"))  // Dependency to work with Kotlin scripts
 }

@@ -1,4 +1,4 @@
-package com.example.parasol.ui.home.uiStateScreens
+package com.example.parasol.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

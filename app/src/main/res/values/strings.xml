@@ -12,4 +12,7 @@
     <string name="extremely_risk">Extremely risk</string>
     <string name="uv_index_right_now">UV index right now</string>
     <string name="no_cities_text">No cities, try adding one using the search above</string>
+    <string name="open_menu">Open menu</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
 </resources>

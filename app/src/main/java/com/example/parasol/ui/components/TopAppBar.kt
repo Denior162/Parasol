@@ -32,7 +32,7 @@ fun HomeScreenTopAppBar(
             IconButton(onClick = navDrawer) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Localized description"
+                    contentDescription = stringResource(R.string.open_menu)
                 )
             }
         },

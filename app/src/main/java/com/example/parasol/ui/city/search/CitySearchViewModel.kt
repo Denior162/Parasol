@@ -6,13 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.parasol.data.CitiesRepository
 import com.example.parasol.data.CityEntity
 import com.example.parasol.network.geoCoding.City
-import com.example.parasol.network.geoCoding.SearchCityApi
+import com.example.parasol.network.geoCoding.GeocodingApiSearchCity
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class SearchUiState {
     data class Success(val result: List<City>) : SearchUiState()
@@ -20,7 +22,11 @@ sealed class SearchUiState {
     data object Loading : SearchUiState()
 }
 
-class CitySearchViewModel(private val citiesRepository: CitiesRepository) : ViewModel() {
+@HiltViewModel
+class CitySearchViewModel @Inject constructor(
+    private val citiesRepository: CitiesRepository,
+    private val geocodingApi: GeocodingApiSearchCity // Injected API service
+) : ViewModel() {
     private val _cities = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
     val cities: StateFlow<SearchUiState> = _cities
 
@@ -34,12 +40,11 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
         searchJob?.cancel() // Cancel the previous job if it's still running
 
         searchJob = viewModelScope.launch {
-            delay(debounceDelay) // Wait for the debounce period
-
             _cities.value = SearchUiState.Loading
 
             try {
-                val result = SearchCityApi.retrofitService.searchCities(cityName)
+                delay(debounceDelay) // Wait for the debounce period
+                val result = geocodingApi.searchCities(cityName) // Use injected API service
                 _cities.value = if (result.isNotEmpty()) {
                     SearchUiState.Success(result)
                 } else {
@@ -66,7 +71,6 @@ class CitySearchViewModel(private val citiesRepository: CitiesRepository) : View
             citiesRepository.insertCity(cityEntity)
         }
     }
-
 
     fun deleteCity(city: CityEntity) {
         viewModelScope.launch(Dispatchers.IO) {

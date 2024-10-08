@@ -8,13 +8,16 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val USER_PREFERENCES_NAME = "user_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = USER_PREFERENCES_NAME)
 
-//@Singleton
-class UserPreferencesRepository //@Inject constructor
-    (private val context: Context) {
+@Singleton
+class UserPreferencesRepository @Inject constructor(
+    private val context: Context
+) {
 
     private object PreferencesKeys {
         val SELECTED_CITY = stringPreferencesKey("selected_city")

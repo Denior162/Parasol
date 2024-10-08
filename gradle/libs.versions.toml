@@ -2,7 +2,8 @@
 agp = "8.5.2"
 converterGson = "2.9.0"
 datastorePreferences = "1.1.1"
-hiltAndroid = "2.51.1"
+hiltAndroidCompiler = "2.51.1"
+hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.20"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -15,26 +16,25 @@ ktorClientSerialization = "2.3.12"
 ktorSerializationKotlinxJson = "2.1.0"
 lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
-composeBom = "2024.09.02"
-materialIconsExtended = "1.7.2"
-navigationRuntimeKtx = "2.8.1"
-navigationCompose = "2.8.1"
+composeBom = "2024.09.03"
+materialIconsExtended = "1.7.3"
+navigationRuntimeKtx = "2.8.2"
+navigationCompose = "2.8.2"
 retrofit = "2.9.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 roomRuntime = "2.6.1"
-rules = "1.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
-androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
-androidx-runner = { module = "androidx.test:runner", version.ref = "rules" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidCompiler" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -63,4 +63,3 @@ retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-

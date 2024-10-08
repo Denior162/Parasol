@@ -3,11 +3,10 @@ package com.example.parasol.navigation
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.parasol.ui.AppViewModelProvider
 import com.example.parasol.ui.city.search.CitySearchDestination
 import com.example.parasol.ui.city.search.CitySearchScreen
 import com.example.parasol.ui.city.search.CitySearchViewModel
@@ -17,10 +16,11 @@ import com.example.parasol.ui.home.HomeViewModel
 
 @Composable
 fun ParasolNavHost(
+    drawerOpening: Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val homeViewModel: HomeViewModel = hiltViewModel()
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
@@ -43,12 +43,12 @@ fun ParasolNavHost(
             )
         }
         composable(route = CitySearchDestination.route) {
-            val searchViewModel: CitySearchViewModel =
-                viewModel(factory = AppViewModelProvider.Factory)
+            val searchViewModel: CitySearchViewModel = hiltViewModel()
             CitySearchScreen(
                 onNavigateUp = { navController.navigateUp() },
                 navigateBack = { navController.popBackStack() },
-                searchUiState = searchViewModel.cities
+                searchUiState = searchViewModel.cities,
+                drawerOpening = drawerOpening
             )
         }
     }

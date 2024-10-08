@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.MenuOpen
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,7 +50,7 @@ fun CitiesModalDrawer(
                         )
                         IconButton(onClick = drawerAction) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Default.MenuOpen,
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                                 contentDescription = "Close drawer"
                             )
                         }

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,15 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.parasol.R
 import com.example.parasol.data.CityEntity
 import com.example.parasol.navigation.NavigationDestination
 import com.example.parasol.network.geoCoding.City
-import com.example.parasol.ui.AppViewModelProvider
+import com.example.parasol.ui.home.ErrorScreen
 import com.example.parasol.ui.home.HomeViewModel
-import com.example.parasol.ui.home.uiStateScreens.ErrorScreen
-import com.example.parasol.ui.home.uiStateScreens.LoadingScreen
+import com.example.parasol.ui.home.LoadingScreen
 import kotlinx.coroutines.flow.StateFlow
 
 object CitySearchDestination : NavigationDestination {
@@ -51,13 +51,14 @@ object CitySearchDestination : NavigationDestination {
 fun CitySearchScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
-    viewModel: CitySearchViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    searchUiState: StateFlow<SearchUiState>
+    viewModel: CitySearchViewModel = hiltViewModel(),
+    searchUiState: StateFlow<SearchUiState>,
+    drawerOpening: Unit
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
 
-    val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val homeViewModel: HomeViewModel = hiltViewModel()
     val city by homeViewModel.homeUiState.collectAsState()
 
     Scaffold(topBar = {
@@ -73,11 +74,25 @@ fun CitySearchScreen(
                 expanded = isExpanded,
                 onExpandedChange = { isExpanded = it },
                 leadingIcon = {
-                    IconButton(onClick = { onNavigateUp() }) {
+                    if (isExpanded) IconButton(onClick = { isExpanded = false }) {
+
+                    }
+                    else IconButton(onClick = { drawerOpening }) {
+
+                    }
+                    IconButton(onClick = {
+                        if (isExpanded) {
+                            // Закрываем поле поиска
+                            isExpanded = false
+                        } else {
+                            // Открываем меню
+                            onNavigateUp()
+                        }
+                    }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = if (isExpanded) Icons.AutoMirrored.Filled.ArrowBack else Icons.Filled.Menu,
                             contentDescription = stringResource(
-                                id = R.string.back_button
+                                id = if (isExpanded) R.string.back_button else R.string.open_menu
                             )
                         )
                     }
@@ -134,7 +149,7 @@ fun SearchOutputCityList(
         items(cities) { city ->
             Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                 Card(
-                    onClick = { onCitySelected },
+                    onClick = { onCitySelected(city) },
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth()

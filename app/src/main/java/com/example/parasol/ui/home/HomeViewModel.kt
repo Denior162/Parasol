@@ -8,6 +8,7 @@ import com.example.parasol.data.CityEntity
 import com.example.parasol.data.UserPreferencesRepository
 import com.example.parasol.network.stopLightUVI.IndexApi
 import com.example.parasol.network.stopLightUVI.UvResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,14 +18,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
 sealed class IndexUiState {
     data object Loading : IndexUiState()
     data class Success(val indexes: UvResponse) : IndexUiState()
-    data class Error(val message: String) : IndexUiState() // Ошибка с сообщением
+    data class Error(val message: String) : IndexUiState()
 }
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val citiesRepository: CitiesRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
@@ -51,22 +54,20 @@ class HomeViewModel(
         )
 
     init {
+        loadCities()
         viewModelScope.launch {
             userPreferencesRepository.selectedCityFlow.collect { cityId ->
                 _selectedCityId.value = cityId?.toInt()
                 if (_selectedCityId.value != null) {
-                    loadCityCoordinatesAndGetUV() // Загружаем координаты и получаем UV индекс
+                    loadCityCoordinatesAndGetUV()
                 } else {
                     Log.w("HomeViewModel", "No city selected in DataStore.")
-                    _indexUiState.value =
-                        IndexUiState.Error("Город не выбран") // Устанавливаем ошибку
+                    _indexUiState.value = IndexUiState.Error("Город не выбран")
                 }
             }
         }
-
-        // Запускаем загрузку данных о городах при инициализации
-        loadCities()
     }
+
 
     private fun loadCities() {
         viewModelScope.launch {
@@ -111,14 +112,17 @@ class HomeViewModel(
     }
 
     fun setSelectedCity(city: CityEntity?) {
-        if (city != null && city.id != _selectedCityId.value) { // Проверяем, отличается ли выбранный город от текущего
-            _selectedCityId.value = city.id
-            viewModelScope.launch {
-                userPreferencesRepository.saveSelectedCity(city.id.toString())
+        city?.let {
+            if (it.id != _selectedCityId.value) {
+                _selectedCityId.value = it.id
+                viewModelScope.launch {
+                    userPreferencesRepository.saveSelectedCity(it.id.toString())
+                    getUVIs(it.latitude, it.longitude)
+                }
             }
-            getUVIs(city.latitude, city.longitude) // Вызов getUVIs с координатами выбранного города
         }
     }
+
 
     private fun getUVIs(latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {

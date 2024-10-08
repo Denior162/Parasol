@@ -6,7 +6,7 @@ interface AppContainer {
     val citiesRepository: CitiesRepository
 }
 
-class AppDataContainer //@Inject constructor
+class AppDataContainer
     (
     private val context: Context
 ) : AppContainer {

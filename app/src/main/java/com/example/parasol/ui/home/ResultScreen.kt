@@ -1,4 +1,4 @@
-package com.example.parasol.ui.home.uiStateScreens
+package com.example.parasol.ui.home
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -30,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.parasol.R
 import com.example.parasol.R.string.high_risk
@@ -38,7 +39,6 @@ import com.example.parasol.R.string.moderate_risk
 import com.example.parasol.network.stopLightUVI.Forecast
 import com.example.parasol.network.stopLightUVI.UvResponse
 import com.example.parasol.ui.components.getCardColors
-import com.example.parasol.ui.home.UvRiskLevel
 import com.example.parasol.ui.theme.extendedDark
 import com.example.parasol.ui.theme.extendedLight
 import java.time.ZoneId
@@ -75,21 +75,20 @@ fun ResultScreen(uvResponse: UvResponse, modifier: Modifier) {
             }
         }
         items(forecastGroups) { group ->
-            ForecastGroupCard(group = group)
+            ForecastCard(group = group)
         }
 
     }
 }
 
 @Composable
-fun ForecastGroupCard(group: ForecastGroup) {
+fun ForecastCard(group: ForecastGroup) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val extendedColorScheme = if (isSystemInDarkTheme()) extendedDark else extendedLight
     val cardColor = getCardColors(group.items.first().uvi, extendedColorScheme)
     Card(
         onClick = { isExpanded = !isExpanded },
         modifier = Modifier
-            .padding(vertical = 4.dp)
             .animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
@@ -97,9 +96,12 @@ fun ForecastGroupCard(group: ForecastGroup) {
             ),
         colors = cardColor
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column {
             Row(
-                Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
                     TextLevelRisk(group = group.level)
@@ -107,12 +109,15 @@ fun ForecastGroupCard(group: ForecastGroup) {
                 }
                 IconButton(onClick = { isExpanded = !isExpanded }) {
                     Icon(
-                        imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Expand/Collapse"
+                        imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp
+                        else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = if (isExpanded) stringResource(R.string.collapse)
+                        else stringResource(
+                            R.string.expand
+                        )
                     )
                 }
             }
-
         }
         if (isExpanded) {
             Column {
@@ -193,4 +198,17 @@ fun parseDate(dateString: String): ZonedDateTime {
 fun formatTime(zonedDateTime: ZonedDateTime): String {
     return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault())
         .format(DateTimeFormatter.ofPattern("HH:mm"))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MyCardPreview() {
+    val sampleGroup = ForecastGroup(
+        items = mutableListOf(
+            Forecast(uvi = 1.9, time = "2024-10-03T12:00:00Z"),
+            Forecast(uvi = 1.1, time = "2024-10-03T13:00:00Z")
+        ),
+        level = UvRiskLevel.LOW
+    )
+    ForecastCard(group = sampleGroup)
 }
