@@ -1,6 +1,5 @@
 package com.example.parasol.ui.components
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
@@ -18,39 +17,34 @@ import com.example.parasol.R
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreenTopAppBar(
-    navDrawer: () -> Unit,
+    navigationIcon: () -> Unit,
     citySearch: () -> Unit,
-    retryAction: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
-    textInTopBar: String
 ) {
     LargeTopAppBar(
         title = {
-            Text(text = textInTopBar)
+            Text(text = stringResource(id = R.string.app_name))
         },
         navigationIcon = {
-            IconButton(onClick = navDrawer) {
+            IconButton(onClick = navigationIcon) {
                 Icon(
-                    imageVector = Icons.Filled.Menu,
+                    imageVector = Icons.Default.Menu,
                     contentDescription = stringResource(R.string.open_menu)
                 )
             }
         },
         actions = {
-            Row {
-
             IconButton(onClick = citySearch) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(id = R.string.city_search)
-                    )
-                }
-                IconButton(onClick = retryAction) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.retry)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = stringResource(id = R.string.city_search)
+                )
+            }
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(id = R.string.retry)
+                )
             }
 
         },

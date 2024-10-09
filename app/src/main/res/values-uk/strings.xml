@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="back_button">Назад</string>
-    <string name="home">Головна</string>
     <string name="add_city">Додати місто</string>
     <string name="retry">Спробувати ще раз</string>
     <string name="city_search">Пошук міста</string>
@@ -13,6 +11,5 @@
     <string name="uv_index_right_now">УФ індекс зараз</string>
     <string name="no_cities_text">Немає міст, спробуйте додати за допомогою пошуку вище</string>
     <string name="open_menu">Відкрити меню</string>
-    <string name="expand">Розгорнути</string>
-    <string name="collapse">Згорнути</string>
+    <string name="already_added_cities">Вже додані міста</string>
 </resources>

@@ -13,12 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,8 +32,9 @@ import com.example.parasol.R
 import com.example.parasol.R.string.high_risk
 import com.example.parasol.R.string.low_risk
 import com.example.parasol.R.string.moderate_risk
-import com.example.parasol.network.stopLightUVI.Forecast
-import com.example.parasol.network.stopLightUVI.UvResponse
+import com.example.parasol.network.model.Forecast
+import com.example.parasol.network.model.UvResponse
+
 import com.example.parasol.ui.components.getCardColors
 import com.example.parasol.ui.theme.extendedDark
 import com.example.parasol.ui.theme.extendedLight
@@ -51,31 +48,37 @@ fun ResultScreen(uvResponse: UvResponse, modifier: Modifier) {
     val forecastGroups = remember { groupForecastByIndexLevel(uvResponse.forecast) }
     LazyColumn(state = rememberLazyListState(), modifier = modifier) {
         item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "${uvResponse.now.uvi}",
-                        style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.uv_index_right_now),
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                }
-
-            }
+            UVRightNowCard(uvResponse)
         }
         items(forecastGroups) { group ->
             ForecastCard(group = group)
+        }
+
+    }
+}
+
+@Composable
+fun UVRightNowCard(uvResponse: UvResponse) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "${uvResponse.now.uvi}",
+                style = MaterialTheme.typography.displayLarge,
+                modifier = Modifier.padding(16.dp)
+            )
+            Text(
+                text = stringResource(R.string.uv_index_right_now),
+                style = MaterialTheme.typography.displaySmall
+            )
         }
 
     }
@@ -107,15 +110,8 @@ fun ForecastCard(group: ForecastGroup) {
                     TextLevelRisk(group = group.level)
                     ForecastTimeRange(group.items.first().time, group.items.last().time)
                 }
-                IconButton(onClick = { isExpanded = !isExpanded }) {
-                    Icon(
-                        imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp
-                        else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = if (isExpanded) stringResource(R.string.collapse)
-                        else stringResource(
-                            R.string.expand
-                        )
-                    )
+                IconButton(onClick = { /*TODO*/ }) {
+                    
                 }
             }
         }

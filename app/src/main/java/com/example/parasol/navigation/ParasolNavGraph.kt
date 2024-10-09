@@ -2,53 +2,51 @@ package com.example.parasol.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.parasol.ui.city.search.CitySearchDestination
 import com.example.parasol.ui.city.search.CitySearchScreen
 import com.example.parasol.ui.city.search.CitySearchViewModel
-import com.example.parasol.ui.home.HomeDestination
 import com.example.parasol.ui.home.HomeScreen
 import com.example.parasol.ui.home.HomeViewModel
 
+sealed class Screen(val route: String) {
+    data object Home : Screen("home")
+    data object CitySearch : Screen("city_search")
+}
+
+
 @Composable
 fun ParasolNavHost(
-    drawerOpening: Unit,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
 ) {
     val homeViewModel: HomeViewModel = hiltViewModel()
     NavHost(
         navController = navController,
-        startDestination = HomeDestination.route,
-        modifier = modifier
+        startDestination = Screen.Home.route
     ) {
-        composable(route = HomeDestination.route) {
+        composable(route = Screen.Home.route) {
             HomeScreen(
                 indexUiState = homeViewModel.indexUiState,
                 navigateToCitySearch = {
                     try {
-                        navController.navigate(CitySearchDestination.route)
+                        navController.navigate(Screen.CitySearch.route)
                     } catch (e: Exception) {
                         Log.e(
                             "NavigationError",
                             "Error navigating to CitySearchDestination", e
                         )
                     }
-                },
-                retryAction = {},
+                }
             )
         }
-        composable(route = CitySearchDestination.route) {
+        composable(route = Screen.CitySearch.route) {
             val searchViewModel: CitySearchViewModel = hiltViewModel()
             CitySearchScreen(
-                onNavigateUp = { navController.navigateUp() },
+                viewModel = searchViewModel,
                 navigateBack = { navController.popBackStack() },
                 searchUiState = searchViewModel.cities,
-                drawerOpening = drawerOpening
             )
         }
     }

@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parasol.data.CitiesRepository
 import com.example.parasol.data.CityEntity
-import com.example.parasol.network.geoCoding.City
-import com.example.parasol.network.geoCoding.GeocodingApiSearchCity
+import com.example.parasol.network.NominatimApiService
+import com.example.parasol.network.model.City
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,15 +17,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class SearchUiState {
+    data object Loading : SearchUiState()
     data class Success(val result: List<City>) : SearchUiState()
     data object Error : SearchUiState()
-    data object Loading : SearchUiState()
 }
 
 @HiltViewModel
 class CitySearchViewModel @Inject constructor(
     private val citiesRepository: CitiesRepository,
-    private val geocodingApi: GeocodingApiSearchCity // Injected API service
+    private val geocodingApi: NominatimApiService
 ) : ViewModel() {
     private val _cities = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
     val cities: StateFlow<SearchUiState> = _cities

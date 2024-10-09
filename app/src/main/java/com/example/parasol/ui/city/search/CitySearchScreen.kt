@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,26 +32,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.parasol.R
 import com.example.parasol.data.CityEntity
-import com.example.parasol.navigation.NavigationDestination
-import com.example.parasol.network.geoCoding.City
+import com.example.parasol.network.model.City
 import com.example.parasol.ui.home.ErrorScreen
 import com.example.parasol.ui.home.HomeViewModel
 import com.example.parasol.ui.home.LoadingScreen
 import kotlinx.coroutines.flow.StateFlow
 
-object CitySearchDestination : NavigationDestination {
-    override val route = "city_search"
-    override val titleRes = R.string.city_search
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CitySearchScreen(
     navigateBack: () -> Unit,
-    onNavigateUp: () -> Unit,
     viewModel: CitySearchViewModel = hiltViewModel(),
-    searchUiState: StateFlow<SearchUiState>,
-    drawerOpening: Unit
+    searchUiState: StateFlow<SearchUiState>
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
@@ -69,32 +60,13 @@ fun CitySearchScreen(
                     query = it
                     viewModel.getSearchResult(query)
                 },
-                placeholder = { Text(text = "Пошук міста") },
+                placeholder = { Text(text = stringResource(id = R.string.city_search)) },
                 onSearch = {},
                 expanded = isExpanded,
                 onExpandedChange = { isExpanded = it },
                 leadingIcon = {
-                    if (isExpanded) IconButton(onClick = { isExpanded = false }) {
+                    IconButton(onClick = { /*TODO*/ }) {
 
-                    }
-                    else IconButton(onClick = { drawerOpening }) {
-
-                    }
-                    IconButton(onClick = {
-                        if (isExpanded) {
-                            // Закрываем поле поиска
-                            isExpanded = false
-                        } else {
-                            // Открываем меню
-                            onNavigateUp()
-                        }
-                    }) {
-                        Icon(
-                            imageVector = if (isExpanded) Icons.AutoMirrored.Filled.ArrowBack else Icons.Filled.Menu,
-                            contentDescription = stringResource(
-                                id = if (isExpanded) R.string.back_button else R.string.open_menu
-                            )
-                        )
                     }
                 }
             )
@@ -107,17 +79,16 @@ fun CitySearchScreen(
                         val cities = (currentCitySearchUiState as SearchUiState.Success).result
                         SearchOutputCityList(
                             cities,
-                            onCitySelected = { /* Обработка выбора города */ },
+                            onCitySelected = { /* TODO() */ },
                             onSaveCity = { city ->
-                                viewModel.saveCity(city) // Сохраняем город при нажатии на иконку
+                                viewModel.saveCity(city)
                             },
 
                             navigateBack = navigateBack
                         )
                     }
 
-                    is SearchUiState.Error -> ErrorScreen {
-                    }
+                    is SearchUiState.Error -> ErrorScreen(retryAction = { /*TODO()*/ })
                 }
             }
         }
@@ -184,7 +155,12 @@ fun ListOfCitiesInSearchScreen(
     deleteCity: (CityEntity) -> Unit
 ) {
     LazyColumn {
-        item { Text(text = "Вже додані міста", modifier = Modifier.padding(4.dp)) }
+        item {
+            Text(
+                text = stringResource(R.string.already_added_cities),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
         items(items = cityList) { city ->
             CityElementInSearch(city = city, deleteCity = { deleteCity(city) })

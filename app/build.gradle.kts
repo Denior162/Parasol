@@ -57,28 +57,30 @@ android {
 dependencies {
     // AndroidX Libraries
     implementation(libs.androidx.core.ktx) // Core KTX extensions
-    implementation(libs.androidx.lifecycle.runtime.ktx) // Lifecycle extensions for Kotlin
     implementation(libs.androidx.activity.compose) // Jetpack Compose support for Activity
     implementation(platform(libs.androidx.compose.bom)) // BOM for Compose libraries
     implementation(libs.androidx.ui) // Core UI components for Jetpack Compose
     implementation(libs.androidx.ui.graphics) // Graphics components for Jetpack Compose UI
     implementation(libs.androidx.ui.tooling.preview) // Preview tooling for Jetpack Compose UI
     implementation(libs.androidx.material3) // Material Design 3 components
+    implementation(libs.androidx.lifecycle.runtime.ktx) // Lifecycle extensions for Kotlin
     implementation(libs.androidx.navigation.runtime.ktx) // Navigation component with Kotlin support
     implementation(libs.androidx.navigation.compose) // Navigation for Jetpack Compose
 
     // Retrofit for REST API interaction
-    implementation(libs.retrofit2.converter.gson) // Gson converter for Retrofit
     implementation(libs.retrofit) // Core Retrofit library
-    implementation(libs.converter.gson) // Alternative way to add Gson converter (if needed)
+    implementation(libs.retrofit2.converter.gson) // Gson converter for Retrofit
     implementation(libs.retrofit2.kotlinx.serialization.converter) // Converter for Kotlinx Serialization
+    implementation(libs.converter.gson) // Alternative way to add Gson converter (if needed)
+    implementation(libs.kotlinx.serialization.json)
 
     // Ktor for asynchronous HTTP client operations
-    implementation(libs.ktor.client.content.negotiation) // Content negotiation support in Ktor client
-    implementation(libs.ktor.client.json) // JSON support in Ktor client
-    implementation(libs.ktor.serialization.kotlinx.json) // Kotlinx Serialization support in Ktor client
     implementation(libs.ktor.client.core) // Core components of Ktor client
+    implementation(libs.ktor.client.json) // JSON support in Ktor client
+    implementation(libs.ktor.client.content.negotiation) // Content negotiation support in Ktor client
     implementation(libs.ktor.client.serialization) // Optional JSON serialization support in Ktor
+    implementation(libs.ktor.client.okhttp) // OkHttp support for Ktor client
+    implementation(libs.ktor.serialization.kotlinx.json) // Kotlinx Serialization support in Ktor client
 
     // Room for local database management
     implementation(libs.androidx.room.runtime) // Core Room library for database operations
@@ -88,16 +90,16 @@ dependencies {
     // Datastore for storing preferences and settings
     implementation(libs.androidx.datastore.preferences) // Preferences DataStore
 
+    // Dependency Injection with Hilt
     implementation(libs.hilt.android) // Hilt Android dependency injection library
     kapt(libs.hilt.android.compiler) // Hilt compiler for annotation processing
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
+    androidTestImplementation(platform(libs.androidx.compose.bom)) // BOM for Compose in tests
     androidTestImplementation(libs.androidx.junit) // JUnit for Android instrumentation tests
     androidTestImplementation(libs.androidx.espresso.core) // Espresso for UI testing
-
-    androidTestImplementation(platform(libs.androidx.compose.bom)) // BOM for Compose in tests
     androidTestImplementation(libs.androidx.ui.test.junit4) // UI testing tools for Jetpack Compose
 
     debugImplementation(libs.androidx.ui.tooling) // Debugging tools for Jetpack Compose UI components
@@ -105,3 +107,4 @@ dependencies {
 
     implementation(kotlin("script-runtime"))  // Dependency to work with Kotlin scripts
 }
+

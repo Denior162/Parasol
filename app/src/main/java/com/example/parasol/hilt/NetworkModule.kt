@@ -1,6 +1,7 @@
 package com.example.parasol.hilt
 
-import com.example.parasol.network.geoCoding.GeocodingApiSearchCity
+import com.example.parasol.network.CurrentUvApiService
+import com.example.parasol.network.NominatimApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -16,15 +17,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://nominatim.openstreetmap.org/"
+    private const val GEOCODING_BASE_URL = "https://nominatim.openstreetmap.org/"
+    private const val UV_INDEX_BASE_URL = "https://currentuvindex.com/api/v1/"
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
-                val originalRequest = chain.request()
-                val requestWithUserAgent = originalRequest.newBuilder()
+                val requestWithUserAgent = chain.request().newBuilder()
                     .header("User-Agent", "YourAppName/1.0")
                     .build()
                 chain.proceed(requestWithUserAgent)
@@ -35,22 +36,30 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideGson(): Gson {
-        return GsonBuilder().create() // Customize Gson if needed
+        return GsonBuilder().create()
     }
 
     @Provides
     @Singleton
-    fun provideRetrofit(client: OkHttpClient, gson: Gson): Retrofit {
-        return Retrofit.Builder()
+    fun provideGeocodingApiService(client: OkHttpClient, gson: Gson): NominatimApiService {
+        val retrofit = Retrofit.Builder()
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl(BASE_URL)
+            .baseUrl(GEOCODING_BASE_URL)
             .build()
+
+        return retrofit.create(NominatimApiService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideGeocodingApiService(retrofit: Retrofit): GeocodingApiSearchCity {
-        return retrofit.create(GeocodingApiSearchCity::class.java)
+    fun provideStopLightApiService(client: OkHttpClient, gson: Gson): CurrentUvApiService {
+        val retrofit = Retrofit.Builder()
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .baseUrl(UV_INDEX_BASE_URL)
+            .build()
+
+        return retrofit.create(CurrentUvApiService::class.java)
     }
 }

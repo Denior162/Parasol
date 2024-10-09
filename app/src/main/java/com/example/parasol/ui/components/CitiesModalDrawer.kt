@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -28,7 +25,6 @@ fun CitiesModalDrawer(
     drawerState: DrawerState,
     onCitySelected: (CityEntity) -> Unit,
     selectedCityId: Int?,
-    drawerAction: () -> Unit,
     content: @Composable () -> Unit,
 
 ) {
@@ -48,11 +44,8 @@ fun CitiesModalDrawer(
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
-                        IconButton(onClick = drawerAction) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                contentDescription = "Close drawer"
-                            )
+                        IconButton(onClick = { /*TODO*/ }) {
+                            
                         }
                     }
                     CitiesForDrawer(

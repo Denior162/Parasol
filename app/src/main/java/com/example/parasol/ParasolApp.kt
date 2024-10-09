@@ -25,11 +25,12 @@ fun ParasolApp(
     val scope = rememberCoroutineScope()
     val selectedCityId by viewModel.selectedCityId.collectAsState()
 
-    fun drawerOpenOrClose() {
+    fun toggleDrawer() {
         scope.launch {
-            drawerState.apply {
-                if (isClosed) open()
-                else close()
+            if (drawerState.isClosed) {
+                drawerState.open()
+            } else {
+                drawerState.close()
             }
         }
     }
@@ -39,14 +40,12 @@ fun ParasolApp(
         onCitySelected = { selectedCity ->
             Log.d("CitiesModalDrawer", "City selected: ${selectedCity.name}")
             viewModel.setSelectedCity(selectedCity)
-            drawerOpenOrClose()
+            toggleDrawer()
         },
         selectedCityId = selectedCityId,
-        drawerState = drawerState, drawerAction = {
-            drawerOpenOrClose()
-        }
+        drawerState = drawerState
     )
     {
-        ParasolNavHost(navController = navController, drawerOpening = drawerOpenOrClose())
+        ParasolNavHost(navController = navController)
     }
 }

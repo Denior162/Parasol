@@ -1,4 +1,4 @@
-package com.example.parasol.network.geoCoding
+package com.example.parasol.network.model
 
 data class City(
     val address: AddressData,
