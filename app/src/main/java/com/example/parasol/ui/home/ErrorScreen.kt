@@ -16,13 +16,14 @@ import androidx.compose.ui.res.stringResource
 import com.example.parasol.R
 
 @Composable
-fun ErrorScreen(retryAction: () -> Unit) {
+fun ErrorScreen(retryAction: () -> Unit, errorMessage: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Text(text = errorMessage)
             Button(onClick = retryAction) {
                 Icon(imageVector = Icons.Default.Refresh, contentDescription = null)
                 Text(text = stringResource(id = R.string.retry))

@@ -3,21 +3,17 @@ package com.example.parasol.ui.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.example.parasol.ui.components.HomeScreenTopAppBar
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,26 +21,18 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     navigateToCitySearch: () -> Unit,
     indexUiState: StateFlow<IndexUiState>,
+    retryAction: () -> Unit,
+    citiesDrawerAction: () -> Unit
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val currentIndexUiState by indexUiState.collectAsState(IndexUiState.Loading)
 
-
-
     Scaffold(topBar = {
         HomeScreenTopAppBar(
-            navigationIcon = {
-                scope.launch {
-                    drawerState.apply {
-                        if (isClosed) open()
-                        else close()
-                    }
-                }
-            },
+            citiesDrawerAction = citiesDrawerAction,
             scrollBehavior = scrollBehavior,
-            citySearch = navigateToCitySearch,
+            navigateToCitySearch = navigateToCitySearch,
+            retryAction = retryAction
         )
     }
     ) { innerPadding ->
@@ -61,7 +49,10 @@ fun HomeScreen(
                     modifier = Modifier.nestedScroll(connection = scrollBehavior.nestedScrollConnection)
                 )
 
-                is IndexUiState.Error -> ErrorScreen(retryAction = { TODO() })
+                is IndexUiState.Error -> ErrorScreen(
+                    retryAction = retryAction,
+                    errorMessage = (currentIndexUiState as IndexUiState.Error).errorMessage
+                )
             }
         }
     }

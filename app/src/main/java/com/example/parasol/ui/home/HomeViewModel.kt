@@ -70,6 +70,23 @@ class HomeViewModel @Inject constructor(
         observeSelectedCity()
     }
 
+    fun retryAction() {
+        _selectedCityId.value?.let { selectedId ->
+            viewModelScope.launch {
+                val cityFlow = citiesRepository.getOneCity(selectedId)
+                cityFlow.collect { city ->
+                    if (city != null) {
+                        getUVIs(latitude = city.latitude, longitude = city.longitude)
+                    } else {
+                        handleError(Exception("City not found for ID: $selectedId"))
+                    }
+                }
+            }
+        } ?: run {
+            handleError(Exception("Selected city ID is null."))
+        }
+    }
+
     /**
      * Loads cities from the repository and updates the selected city ID if necessary.
      */

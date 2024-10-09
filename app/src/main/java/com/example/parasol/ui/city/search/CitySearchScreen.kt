@@ -61,7 +61,7 @@ fun CitySearchScreen(
                     viewModel.getSearchResult(query)
                 },
                 placeholder = { Text(text = stringResource(id = R.string.city_search)) },
-                onSearch = {},
+                onSearch = {/*TODO()*/ },
                 expanded = isExpanded,
                 onExpandedChange = { isExpanded = it },
                 leadingIcon = {
@@ -88,7 +88,10 @@ fun CitySearchScreen(
                         )
                     }
 
-                    is SearchUiState.Error -> ErrorScreen(retryAction = { /*TODO()*/ })
+                    is SearchUiState.Error -> ErrorScreen(
+                        retryAction = { /*TODO()*/ },
+                        errorMessage = (""/*TODO()*/)
+                    )
                 }
             }
         }

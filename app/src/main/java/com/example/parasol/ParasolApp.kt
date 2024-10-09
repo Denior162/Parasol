@@ -46,6 +46,6 @@ fun ParasolApp(
         drawerState = drawerState
     )
     {
-        ParasolNavHost(navController = navController)
+        ParasolNavHost(navController = navController, citiesDrawerAction = { toggleDrawer() })
     }
 }

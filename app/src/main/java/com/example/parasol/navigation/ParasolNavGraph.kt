@@ -20,8 +20,10 @@ sealed class Screen(val route: String) {
 @Composable
 fun ParasolNavHost(
     navController: NavHostController,
+    citiesDrawerAction: () -> Unit
 ) {
     val homeViewModel: HomeViewModel = hiltViewModel()
+    val searchViewModel: CitySearchViewModel = hiltViewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route
@@ -38,11 +40,12 @@ fun ParasolNavHost(
                             "Error navigating to CitySearchDestination", e
                         )
                     }
-                }
+                },
+                retryAction = { homeViewModel.retryAction() },
+                citiesDrawerAction = citiesDrawerAction
             )
         }
         composable(route = Screen.CitySearch.route) {
-            val searchViewModel: CitySearchViewModel = hiltViewModel()
             CitySearchScreen(
                 viewModel = searchViewModel,
                 navigateBack = { navController.popBackStack() },

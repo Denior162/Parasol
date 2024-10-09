@@ -17,16 +17,17 @@ import com.example.parasol.R
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreenTopAppBar(
-    navigationIcon: () -> Unit,
-    citySearch: () -> Unit,
+    citiesDrawerAction: () -> Unit,
+    navigateToCitySearch: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
+    retryAction: () -> Unit
 ) {
     LargeTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
         navigationIcon = {
-            IconButton(onClick = navigationIcon) {
+            IconButton(onClick = citiesDrawerAction) {
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = stringResource(R.string.open_menu)
@@ -34,13 +35,13 @@ fun HomeScreenTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = citySearch) {
+            IconButton(onClick = navigateToCitySearch) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = stringResource(id = R.string.city_search)
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = retryAction) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = stringResource(id = R.string.retry)
