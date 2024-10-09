@@ -52,28 +52,3 @@ The app follows a clean architecture pattern:
 2. Use the search bar to find a city.
 3. Select a city to view its UV index information.
 4. The app will save your selected city for future access.
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeature`).
-3. Make your changes and commit them (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Thanks to the contributors of Jetpack Compose, Hilt, Retrofit, and Gson for their excellent libraries that made this project possible.
-
----
-
-Feel free to customize this README further based on your project's specifics, such as adding screenshots, detailed setup instructions, or additional features you plan to implement!
-
-Citations:
-[1] problemy-s-ViewModel-posle-Hilt.txt https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/1064/9c8c1592-adb6-4ef2-b9ae-ba5f47d11585/problemy-s-ViewModel-posle-Hilt.txt
