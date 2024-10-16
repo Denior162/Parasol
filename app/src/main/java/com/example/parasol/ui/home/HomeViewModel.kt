@@ -8,6 +8,7 @@ import com.example.parasol.data.CityEntity
 import com.example.parasol.data.UserPreferencesRepository
 import com.example.parasol.network.CurrentUvApiService
 import com.example.parasol.network.model.UvResponse
+import com.example.parasol.ui.ErrorHandler.handleError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,8 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -37,6 +36,8 @@ sealed class IndexUiState {
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    //private val fetchUVDataUseCase: FetchUVDataUseCase,
+    //private val getCitiesUseCase: GetCitiesUseCase,
     private val uvIndexApi: CurrentUvApiService,
     private val citiesRepository: CitiesRepository,
     private val userPreferencesRepository: UserPreferencesRepository
@@ -92,6 +93,7 @@ class HomeViewModel @Inject constructor(
      */
     private fun loadCities() {
         viewModelScope.launch {
+            //val cities = getCitiesUseCase /*TODO()*/
             citiesRepository.getFullListOfCities().collect { cities ->
                 if (cities.isEmpty()) {
                     _indexUiState.value = IndexUiState.Error(NO_CITIES_AVAILABLE)
@@ -172,6 +174,7 @@ class HomeViewModel @Inject constructor(
             try {
                 Log.d("HomeViewModel", "Fetching UV Index for coordinates: ($latitude, $longitude)")
                 val response = uvIndexApi.getIndexes(latitude, longitude)
+                //fetchUVDataUseCase(latitude, longitude) // Use the use case
                 _indexUiState.value = IndexUiState.Success(response)
             } catch (e: Exception) {
                 handleError(e)
@@ -179,20 +182,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Handles errors that occur during API calls.
-     *
-     * @param exception The exception thrown during API call.
-     */
-    private fun handleError(exception: Exception) {
-        val errorMessage = when (exception) {
-            is IOException -> "Network error: ${exception.message}"
-            is HttpException -> "HTTP error: ${exception.message}"
-            else -> "Unexpected error: ${exception.message}"
-        }
-        Log.e("ViewModelError", errorMessage)
-        _indexUiState.value = IndexUiState.Error(errorMessage)
-    }
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L

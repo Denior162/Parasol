@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_city">Добавить город</string>
+    <string name="retry">Повторить</string>
+    <string name="city_search">Поиск города</string>
+    <string name="low_risk">Низкий риск</string>
+    <string name="moderate_risk">Умеренный риск</string>
+    <string name="high_risk">Высокий риск</string>
+    <string name="very_high_risk">Очень высокий риск</string>
+    <string name="extremely_risk">Экстремальный риск</string>
+    <string name="uv_index_right_now">Индекс УФ прямо сейчас</string>
+    <string name="no_cities_text">Нет городов, попробуйте добавить один с помощью поиска выше</string>
+    <string name="open_menu">Открыть меню</string>
+    <string name="already_added_cities">Уже добавленные города</string>
+</resources>

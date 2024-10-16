@@ -44,7 +44,10 @@ object NetworkModule {
     fun provideGeocodingApiService(client: OkHttpClient, gson: Gson): NominatimApiService {
         val retrofit = Retrofit.Builder()
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(
+                GsonConverterFactory.create(gson)
+                //Json.asConverterFactory("application/json".toMediaType())
+            )
             .baseUrl(GEOCODING_BASE_URL)
             .build()
 

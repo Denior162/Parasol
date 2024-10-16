@@ -1,18 +1,19 @@
 package com.example.parasol.ui.city.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parasol.data.CitiesRepository
 import com.example.parasol.data.CityEntity
 import com.example.parasol.network.NominatimApiService
 import com.example.parasol.network.model.City
+import com.example.parasol.ui.ErrorHandler.handleError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,18 +36,23 @@ class CitySearchViewModel @Inject constructor(
     private val debounceDelay = 1000L // Delay in milliseconds
 
     fun getSearchResult(cityName: String) {
-        if (cityName.length < minQueryLength) return // Ignore short queries
+        if (cityName.length < minQueryLength) return
 
-        searchJob?.cancel() // Cancel the previous job if it's still running
+        searchJob?.cancel()
 
         searchJob = viewModelScope.launch {
             _cities.value = SearchUiState.Loading
 
             try {
-                delay(debounceDelay) // Wait for the debounce period
-                val result = geocodingApi.searchCities(cityName) // Use injected API service
-                _cities.value = if (result.isNotEmpty()) {
-                    SearchUiState.Success(result)
+                delay(debounceDelay)
+                val result = geocodingApi.searchCities(cityName)
+
+                // Filter out already added cities
+                val addedCities = citiesRepository.getFullListOfCities().first().map { it.name }
+                val filteredResult = result.filterNot { addedCities.contains(it.name) }
+
+                _cities.value = if (filteredResult.isNotEmpty()) {
+                    SearchUiState.Success(filteredResult)
                 } else {
                     SearchUiState.Error
                 }
@@ -54,11 +60,6 @@ class CitySearchViewModel @Inject constructor(
                 handleError(e)
             }
         }
-    }
-
-    private fun handleError(e: Throwable) {
-        Log.e("CitySearchViewModel", "Error occurred", e)
-        _cities.value = SearchUiState.Error
     }
 
     fun saveCity(city: City) {

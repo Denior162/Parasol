@@ -97,6 +97,11 @@ dependencies {
 
     // Testing dependencies
     testImplementation(libs.junit) // JUnit for unit testing
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+
     androidTestImplementation(platform(libs.androidx.compose.bom)) // BOM for Compose in tests
     androidTestImplementation(libs.androidx.junit) // JUnit for Android instrumentation tests
     androidTestImplementation(libs.androidx.espresso.core) // Espresso for UI testing

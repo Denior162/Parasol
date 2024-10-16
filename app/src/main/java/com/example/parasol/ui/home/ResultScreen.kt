@@ -1,5 +1,6 @@
 package com.example.parasol.ui.home
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
@@ -34,7 +34,6 @@ import com.example.parasol.R.string.low_risk
 import com.example.parasol.R.string.moderate_risk
 import com.example.parasol.network.model.Forecast
 import com.example.parasol.network.model.UvResponse
-
 import com.example.parasol.ui.components.getCardColors
 import com.example.parasol.ui.theme.extendedDark
 import com.example.parasol.ui.theme.extendedLight
@@ -46,12 +45,16 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ResultScreen(uvResponse: UvResponse, modifier: Modifier) {
     val forecastGroups = remember { groupForecastByIndexLevel(uvResponse.forecast) }
-    LazyColumn(state = rememberLazyListState(), modifier = modifier) {
+    LazyColumn(
+        state = rememberLazyListState(),
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         item {
             UVRightNowCard(uvResponse)
         }
         items(forecastGroups) { group ->
-            ForecastCard(group = group)
+            ForecastCard(forecastGroup = group)
         }
 
     }
@@ -62,10 +65,8 @@ fun UVRightNowCard(uvResponse: UvResponse) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
-        shape = RoundedCornerShape(16.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -85,18 +86,19 @@ fun UVRightNowCard(uvResponse: UvResponse) {
 }
 
 @Composable
-fun ForecastCard(group: ForecastGroup) {
+fun ForecastCard(forecastGroup: ForecastGroup) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val extendedColorScheme = if (isSystemInDarkTheme()) extendedDark else extendedLight
-    val cardColor = getCardColors(group.items.first().uvi, extendedColorScheme)
+    val cardColor = getCardColors(forecastGroup.items.first().uvi, extendedColorScheme)
+
     Card(
         onClick = { isExpanded = !isExpanded },
-        modifier = Modifier
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
-                )
-            ),
+        modifier = Modifier.animateContentSize(
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+        ),
         colors = cardColor
     ) {
         Column {
@@ -107,17 +109,17 @@ fun ForecastCard(group: ForecastGroup) {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
-                    TextLevelRisk(group = group.level)
-                    ForecastTimeRange(group.items.first().time, group.items.last().time)
+                    TextLevelRisk(group = forecastGroup.level)
+                    ForecastTimeRange(
+                        forecastGroup.items.first().time,
+                        forecastGroup.items.last().time
+                    )
                 }
                 IconButton(onClick = { /*TODO*/ }) {
-                    
                 }
             }
-        }
-        if (isExpanded) {
-            Column {
-                group.items.forEach { forecast ->
+            if (isExpanded) {
+                forecastGroup.items.forEach { forecast ->
                     Row {
                         Text(text = "${forecast.uvi}", modifier = Modifier.padding(8.dp))
                         Text(
@@ -128,9 +130,9 @@ fun ForecastCard(group: ForecastGroup) {
                 }
             }
         }
-
     }
 }
+
 
 @Composable
 fun TextLevelRisk(group: UvRiskLevel) {
@@ -143,6 +145,7 @@ fun TextLevelRisk(group: UvRiskLevel) {
             UvRiskLevel.EXTREMELY_HIGH -> stringResource(R.string.extremely_risk)
         }
     )
+
 }
 
 @Composable
@@ -153,18 +156,11 @@ fun ForecastTimeRange(start: String, end: String) {
 }
 
 fun groupForecastByIndexLevel(forecast: List<Forecast>): List<ForecastGroup> {
-    val groups = mutableListOf<ForecastGroup>()
-    var currentGroup: ForecastGroup? = null
-
-    forecast.forEach { forecastItem ->
-        val level = getIndexLevel(forecastItem.uvi)
-        if (currentGroup == null || currentGroup!!.level != level) {
-            currentGroup = ForecastGroup(level, mutableListOf())
-            groups.add(currentGroup!!)
-        }
-        currentGroup!!.items.add(forecastItem)
+    return forecast.groupBy {
+        Pair(getIndexLevel(it.uvi), parseDate(it.time).toLocalDate())
+    }.map { (key, items) ->
+        ForecastGroup(key.first, items.toMutableList())
     }
-    return groups
 }
 
 
@@ -186,6 +182,7 @@ fun parseDate(dateString: String): ZonedDateTime {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
         ZonedDateTime.parse(dateString, formatter.withZone(ZoneId.of("UTC")))
     } catch (e: Exception) {
+        Log.e("ParseDateError", "Error parsing date: $dateString", e)
         ZonedDateTime.now()
     }
 }
@@ -206,5 +203,5 @@ fun MyCardPreview() {
         ),
         level = UvRiskLevel.LOW
     )
-    ForecastCard(group = sampleGroup)
+    ForecastCard(forecastGroup = sampleGroup)
 }
