@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.parasol.data.CitiesRepository
 import com.example.parasol.data.CityEntity
 import com.example.parasol.data.UserPreferencesRepository
-import com.example.parasol.network.CurrentUvApiService
 import com.example.parasol.network.model.UvResponse
 import com.example.parasol.ui.ErrorHandler.handleError
+import com.example.parasol.ui.useCases.FetchUVDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,9 +36,7 @@ sealed class IndexUiState {
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    //private val fetchUVDataUseCase: FetchUVDataUseCase,
-    //private val getCitiesUseCase: GetCitiesUseCase,
-    private val uvIndexApi: CurrentUvApiService,
+    private val fetchUVDataUseCase: FetchUVDataUseCase,
     private val citiesRepository: CitiesRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
@@ -173,8 +171,8 @@ class HomeViewModel @Inject constructor(
             _indexUiState.value = IndexUiState.Loading
             try {
                 Log.d("HomeViewModel", "Fetching UV Index for coordinates: ($latitude, $longitude)")
-                val response = uvIndexApi.getIndexes(latitude, longitude)
-                //fetchUVDataUseCase(latitude, longitude) // Use the use case
+                val response = //uvIndexApi.getIndexes(latitude, longitude)
+                    fetchUVDataUseCase(latitude, longitude) // Use the use case
                 _indexUiState.value = IndexUiState.Success(response)
             } catch (e: Exception) {
                 handleError(e)
