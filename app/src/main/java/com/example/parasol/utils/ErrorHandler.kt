@@ -1,4 +1,4 @@
-package com.example.parasol.ui
+package com.example.parasol.utils
 
 import retrofit2.HttpException
 import java.io.IOException

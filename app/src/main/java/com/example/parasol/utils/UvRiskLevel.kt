@@ -1,4 +1,4 @@
-package com.example.parasol.ui.home
+package com.example.parasol.utils
 
 enum class UvRiskLevel {
     LOW,

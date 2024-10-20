@@ -1,4 +1,4 @@
-package com.example.parasol.ui.city.search
+package com.example.parasol.ui.citySearch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,7 +6,7 @@ import com.example.parasol.data.CitiesRepository
 import com.example.parasol.data.CityEntity
 import com.example.parasol.network.NominatimApiService
 import com.example.parasol.network.model.City
-import com.example.parasol.ui.ErrorHandler.handleError
+import com.example.parasol.utils.ErrorHandler.handleError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

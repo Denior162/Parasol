@@ -1,4 +1,4 @@
-package com.example.parasol.ui.useCases
+package com.example.parasol.utils.useCases
 
 import com.example.parasol.network.CurrentUvApiService
 import com.example.parasol.network.model.UvResponse

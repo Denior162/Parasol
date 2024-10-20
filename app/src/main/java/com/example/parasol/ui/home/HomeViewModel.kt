@@ -7,13 +7,14 @@ import com.example.parasol.data.CitiesRepository
 import com.example.parasol.data.CityEntity
 import com.example.parasol.data.UserPreferencesRepository
 import com.example.parasol.network.model.UvResponse
-import com.example.parasol.ui.ErrorHandler.handleError
-import com.example.parasol.ui.useCases.FetchUVDataUseCase
+import com.example.parasol.utils.ErrorHandler.handleError
+import com.example.parasol.utils.useCases.FetchUVDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -92,14 +93,16 @@ class HomeViewModel @Inject constructor(
     private fun loadCities() {
         viewModelScope.launch {
             //val cities = getCitiesUseCase /*TODO()*/
-            citiesRepository.getFullListOfCities().collect { cities ->
-                if (cities.isEmpty()) {
-                    _indexUiState.value = IndexUiState.Error(NO_CITIES_AVAILABLE)
-                } else if (_selectedCityId.value == null) {
-                    _selectedCityId.value = cities.first().id // Set first city if none selected
-                    loadCityCoordinatesAndGetUV() // Fetch UV index for first city
+            citiesRepository.getFullListOfCities()
+                .distinctUntilChanged()
+                .collect { cities ->
+                    if (cities.isEmpty()) {
+                        _indexUiState.value = IndexUiState.Error(NO_CITIES_AVAILABLE)
+                    } else if (_selectedCityId.value == null) {
+                        _selectedCityId.value = cities.first().id // Set first city if none selected
+                        loadCityCoordinatesAndGetUV() // Fetch UV index for first city
+                    }
                 }
-            }
         }
     }
 

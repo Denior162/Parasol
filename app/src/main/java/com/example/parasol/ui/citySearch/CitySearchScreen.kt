@@ -1,4 +1,4 @@
-package com.example.parasol.ui.city.search
+package com.example.parasol.ui.citySearch
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -133,7 +133,7 @@ fun SearchOutputCityList(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = city.display_name,
+                            text = city.displayName,
                             modifier = Modifier.weight(1f)
                         )
                         IconButton(onClick = {
