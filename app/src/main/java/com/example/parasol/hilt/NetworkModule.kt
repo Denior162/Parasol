@@ -1,7 +1,8 @@
 package com.example.parasol.hilt
 
 import com.example.parasol.network.CurrentUvApiService
-import com.example.parasol.network.NominatimApiService
+import com.example.parasol.network.NominatimReverseApiService
+import com.example.parasol.network.NominatimSearchApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -41,17 +42,36 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGeocodingApiService(client: OkHttpClient, gson: Gson): NominatimApiService {
+    fun provideGeocodingSearchApiService(
+        client: OkHttpClient,
+        gson: Gson
+    ): NominatimSearchApiService {
         val retrofit = Retrofit.Builder()
             .client(client)
             .addConverterFactory(
                 GsonConverterFactory.create(gson)
-                //Json.asConverterFactory("application/json".toMediaType())
             )
             .baseUrl(GEOCODING_BASE_URL)
             .build()
 
-        return retrofit.create(NominatimApiService::class.java)
+        return retrofit.create(NominatimSearchApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeocodingReverseApiService(
+        client: OkHttpClient,
+        gson: Gson
+    ): NominatimReverseApiService {
+        val retrofit = Retrofit.Builder()
+            .client(client)
+            .addConverterFactory(
+                GsonConverterFactory.create(gson)
+            )
+            .baseUrl(GEOCODING_BASE_URL)
+            .build()
+
+        return retrofit.create(NominatimReverseApiService::class.java)
     }
 
     @Provides
@@ -59,7 +79,9 @@ object NetworkModule {
     fun provideStopLightApiService(client: OkHttpClient, gson: Gson): CurrentUvApiService {
         val retrofit = Retrofit.Builder()
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(
+                GsonConverterFactory.create(gson)
+            )
             .baseUrl(UV_INDEX_BASE_URL)
             .build()
 

@@ -1,5 +1,7 @@
 package com.example.parasol.ui.citySearch
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +12,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -30,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,12 +52,29 @@ import kotlinx.coroutines.flow.StateFlow
 fun CitySearchScreen(
     navigateBack: () -> Unit,
     viewModel: CitySearchViewModel = hiltViewModel(),
-    searchUiState: StateFlow<SearchUiState>
+    searchUiState: StateFlow<SearchUiState>,
+    reverseSearchUiState: StateFlow<ReverseSearchUiState>
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     val city by viewModel.homeUiState.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            viewModel.getCurrentLocation(context)
+            viewModel.location?.let { _ ->
+                viewModel.searchCityByCurrentLocation()
+                showDialog = true
+            } ?: run {
+                viewModel.setError(CitySearchViewModel.ErrorType.LocationUnavailable)
+            }
+        } else {
+            viewModel.setError(CitySearchViewModel.ErrorType.PermissionDenied)
+        }
+    }
 
     Scaffold(topBar = {
         SearchBar(modifier = Modifier.fillMaxWidth(), inputField = {
@@ -97,10 +120,44 @@ fun CitySearchScreen(
         }
     },
         bottomBar = {
-            CitiesBottomAppBar()
+            CitiesBottomAppBar(locationAction = {
+                viewModel.searchCityByCurrentLocation()
+                locationPermissionLauncher.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                viewModel.searchCityByCurrentLocation()
+                showDialog = true
+            }
+            )
         }
     )
     { innerPadding ->
+        val reverseSearchedCityUiState by reverseSearchUiState.collectAsState(ReverseSearchUiState.Loading)
+
+        if (showDialog) {
+            LocationCityAlertDialog(
+                onDismissRequest = { showDialog = false },
+                addCityToDatabase = {
+                    if (reverseSearchedCityUiState is ReverseSearchUiState.Success) {
+                        viewModel.addCityToRepository((reverseSearchedCityUiState as ReverseSearchUiState.Success).result)
+                        showDialog = false
+                    }
+                },
+                addCityButtonEnabling = when (reverseSearchedCityUiState) {
+                    is ReverseSearchUiState.Loading -> false
+                    is ReverseSearchUiState.Success -> true
+                    is ReverseSearchUiState.Error -> false // Optionally handle error state
+                },
+                alertText = {
+                    Text(
+                        text = when (reverseSearchedCityUiState) {
+                            ReverseSearchUiState.Error -> "Error with city search"
+                            ReverseSearchUiState.Loading -> "Loading..."
+                            is ReverseSearchUiState.Success -> (reverseSearchedCityUiState as ReverseSearchUiState.Success).result.displayName
+                        }
+                    )
+                }
+            )
+        }
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -203,14 +260,36 @@ fun CityItem(
 
 
 @Composable
-fun CitiesBottomAppBar() {
+fun CitiesBottomAppBar(locationAction: () -> Unit) {
     BottomAppBar(actions = {
         IconButton(onClick = { /*TODO*/ }) {
 
         }
     }, floatingActionButton = {
-        FloatingActionButton(onClick = { /*TODO*/ }) {
-
+        FloatingActionButton(onClick = locationAction) {
+            Icon(
+                imageVector = Icons.Default.LocationOn,
+                contentDescription = stringResource(R.string.get_city_with_location)
+            )
         }
     })
+}
+
+@Composable
+fun LocationCityAlertDialog(
+    addCityToDatabase: () -> Unit,
+    addCityButtonEnabling: Boolean,
+    onDismissRequest: () -> Unit,
+    alertText: @Composable (() -> Unit)?
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            Button(enabled = addCityButtonEnabling, onClick = addCityToDatabase) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                Text(text = "Add city")
+            }
+        },
+        text = alertText
+    )
 }

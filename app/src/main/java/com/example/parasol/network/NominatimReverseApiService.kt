@@ -4,10 +4,13 @@ import com.example.parasol.network.model.City
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface NominatimApiService {
-    @GET("search")
+interface NominatimReverseApiService {
+    @GET("reverse")
     suspend fun searchCities(
-        @Query("q") cityName: String,
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
         @Query("format") format: String = "json"
-    ): List<City>
+
+    ): City
+
 }

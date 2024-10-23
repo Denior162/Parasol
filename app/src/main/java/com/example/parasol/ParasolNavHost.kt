@@ -41,7 +41,8 @@ fun ParasolNavHost(
             CitySearchScreen(
                 viewModel = searchViewModel,
                 navigateBack = { navController.popBackStack() },
-                searchUiState = searchViewModel.citySearchUiState
+                searchUiState = searchViewModel.citySearchUiState,
+                reverseSearchUiState = searchViewModel.cityReverseUiState
             )
         }
     }

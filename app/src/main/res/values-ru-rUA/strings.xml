@@ -12,4 +12,6 @@
     <string name="no_cities_text">Нет городов, попробуйте добавить один с помощью поиска выше</string>
     <string name="open_menu">Открыть меню</string>
     <string name="already_added_cities">Уже добавленные города</string>
+    <string name="delete_from_the_list">удалить %1$s из списка</string>
+    <string name="get_city_with_location">Получить Город с геопозицией</string>
 </resources>

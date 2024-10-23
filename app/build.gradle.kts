@@ -84,7 +84,8 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json) // Kotlinx Serialization support in Ktor client
 
     // Room for local database management
-    implementation(libs.androidx.room.runtime) // Core Room library for database operations
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.play.services.location) // Core Room library for database operations
     ksp(libs.androidx.room.compiler) // Room annotation processor (KSP)
     implementation(libs.androidx.room.ktx) // Kotlin extensions for Room
 
