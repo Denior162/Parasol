@@ -16,7 +16,6 @@ sealed class Screen(val route: String) {
     data object CitySearch : Screen("citySearch")
 }
 
-
 @Composable
 fun ParasolNavHost(
     navController: NavHostController,
@@ -31,7 +30,7 @@ fun ParasolNavHost(
 
             HomeScreen(
                 indexUiState = homeViewModel.indexUiState,
-                navigateToCitySearch = { handleNavigation(navController, Screen.CitySearch) },
+                navigateToCitySearch = { navigateTo(navController, Screen.CitySearch) },
                 retryAction = { homeViewModel.retryAction() },
                 citiesDrawerAction = citiesDrawerAction
             )
@@ -42,16 +41,18 @@ fun ParasolNavHost(
             CitySearchScreen(
                 viewModel = searchViewModel,
                 navigateBack = { navController.popBackStack() },
-                searchUiState = searchViewModel.cities,
+                searchUiState = searchViewModel.citySearchUiState
             )
         }
     }
 }
 
-
-private fun handleNavigation(navController: NavHostController, screen: Screen) {
+private fun navigateTo(navController: NavHostController, screen: Screen) {
     try {
-        navController.navigate(screen.route)
+        navController.navigate(screen.route) {
+            launchSingleTop = true
+            restoreState = true
+        }
     } catch (e: Exception) {
         Log.e("NavigationError", "Error navigating to ${screen.route}", e)
     }

@@ -168,7 +168,6 @@ fun ResultScreen(uvResponse: UvResponse, modifier: Modifier) {
 
 @Composable
 fun UVRightNowCard(uvResponse: UvResponse) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -210,12 +209,12 @@ fun ForecastCard(
         ),
         colors = cardColor
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1F)) {
                     TextLevelRisk(group = forecastGroup.level)
                     ForecastTimeRange(
                         forecastGroup.items.first().time,

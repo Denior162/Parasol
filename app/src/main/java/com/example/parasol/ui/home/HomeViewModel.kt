@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
 
     fun retryAction() {
         _selectedCityId.value?.let { selectedId ->
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 val cityFlow = citiesRepository.getOneCity(selectedId)
                 cityFlow.collect { city ->
                     if (city != null) {
@@ -91,8 +91,7 @@ class HomeViewModel @Inject constructor(
      * Loads cities from the repository and updates the selected city ID if necessary.
      */
     private fun loadCities() {
-        viewModelScope.launch {
-            //val cities = getCitiesUseCase /*TODO()*/
+        viewModelScope.launch(Dispatchers.IO) {
             citiesRepository.getFullListOfCities()
                 .distinctUntilChanged()
                 .collect { cities ->
@@ -110,7 +109,7 @@ class HomeViewModel @Inject constructor(
      * Observes changes to the selected city from user preferences.
      */
     private fun observeSelectedCity() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userPreferencesRepository.selectedCityFlow.collect { cityId ->
                 _selectedCityId.value = cityId?.toInt()
                 if (_selectedCityId.value != null) {
@@ -127,7 +126,7 @@ class HomeViewModel @Inject constructor(
      * Loads coordinates for the selected city and fetches the UV index.
      */
     private fun loadCityCoordinatesAndGetUV() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _selectedCityId.value?.let { selectedId ->
                 val cityFlow = citiesRepository.getOneCity(selectedId)
 
@@ -155,7 +154,7 @@ class HomeViewModel @Inject constructor(
         city?.let {
             if (it.id != _selectedCityId.value) {
                 _selectedCityId.value = it.id
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     userPreferencesRepository.saveSelectedCity(it.id.toString())
                     getUVIs(it.latitude, it.longitude)
                 }
@@ -183,7 +182,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
 
@@ -193,7 +191,6 @@ class HomeViewModel @Inject constructor(
         private const val CITY_NOT_FOUND = "City not found"
         private const val CITY_ID_NOT_FOUND = "City ID not found"
     }
-
 }
 
 /**

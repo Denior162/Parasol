@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx) // Lifecycle extensions for Kotlin
     implementation(libs.androidx.navigation.runtime.ktx) // Navigation component with Kotlin support
     implementation(libs.androidx.navigation.compose) // Navigation for Jetpack Compose
+    implementation(libs.material3)
 
     // Retrofit for REST API interaction
     implementation(libs.retrofit) // Core Retrofit library

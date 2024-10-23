@@ -1,12 +1,13 @@
 package com.example.parasol.ui
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -22,11 +23,12 @@ fun ParasolApp(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-    val drawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val selectedCityId by viewModel.selectedCityId.collectAsState()
-    val toggleDrawer: () -> Unit = {
-        toggleCitiesDrawer(scope = scope, drawerState = drawerState)
+
+    BackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
     }
 
     CitiesModalDrawer(
@@ -34,23 +36,24 @@ fun ParasolApp(
         onCitySelected = { selectedCity ->
             Log.d("CitiesModalDrawer", "City selected: ${selectedCity.name}")
             viewModel.setSelectedCity(selectedCity)
-            toggleDrawer()
+            toggleCitiesDrawer(scope, drawerState)
         },
         selectedCityId = selectedCityId,
-        drawerState = drawerState
+        drawerState = drawerState,
     ) {
         ParasolNavHost(
             navController = navController,
-            citiesDrawerAction = { toggleDrawer() }
+            citiesDrawerAction = { toggleCitiesDrawer(scope, drawerState) }
         )
     }
 }
 
 fun toggleCitiesDrawer(scope: CoroutineScope, drawerState: DrawerState) {
     scope.launch {
-        when (drawerState.isClosed) {
-            true -> drawerState.open()
-            false -> drawerState.close()
+        if (drawerState.isClosed) {
+            drawerState.open()
+        } else {
+            drawerState.close()
         }
     }
 }
